@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{float}
 
 % Note: theorem, lemma, definition, remark, proposition, conjecture, proof
 % are already defined by svjour3.cls
@@ -229,6 +230,13 @@ This definition is coordinate-invariant: rank is preserved under reparameterizat
 
 The novelty is not that interaction parameters exist in the full parametric family---\citet{amari2001hierarchy}'s hierarchical decomposition already accounts for this. The novelty is that \textbf{dynamics and observation determine which interaction coordinates are identifiable}. Coupling can \textit{activate} coordinates that were structurally present but dynamically inaccessible---a phenomenon we term \textbf{coupling-induced identifiability activation}.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/fig2_geometric_schematic.pdf}
+\caption{\textbf{Geometric schematic of manifold expansion.} At $\kappa = 0$, the image of $F_0$ lies on the constraint submanifold $\mathcal{M}_0$. Under coupling ($\kappa > 0$), the image $F_\kappa(\mathcal{B})$ escapes into the transverse direction $\eta$, increasing Fisher rank by at least one.}
+\label{fig:geometric}
+\end{figure}
+
 \subsection{Mechanism: collective coordinates}
 
 Let $\phi: X_1 \times X_2 \to X_1 \times X_2$ be the coupled dynamics. Under coupling, new \textit{collective coordinates} can become accessible:
@@ -340,6 +348,13 @@ Given time-series data at coupling strengths $\kappa_1 < \kappa_2 < \cdots < \ka
 For the OU example, the minimal sufficient statistics are the sample covariance entries $(\hat{\Sigma}_{11}, \hat{\Sigma}_{22}, \hat{\Sigma}_{12})$; rank increase corresponds to $\hat{\Sigma}_{12}$ becoming $\beta$-sensitive. For Kuramoto, the order parameter magnitude $r$ and phase $\Psi$ suffice; rank increase corresponds to $\Psi$ becoming parameter-sensitive above $K_c$.
 \end{corollary}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_eigenvalue_emergence.pdf}
+\caption{\textbf{Eigenvalue emergence under coupling.} (A) Coupled Ornstein--Uhlenbeck: the third Fisher eigenvalue (correlation direction) emerges immediately at $\kappa > 0$. (B) Kuramoto oscillators: the phase-sensitivity eigenvalue emerges at the critical coupling $K_c$. Both demonstrate coupling-induced identifiability activation predicted by Theorem~\ref{thm:main}.}
+\label{fig:eigenvalue}
+\end{figure}
+
 \subsection{Superadditive accessible complexity}
 \label{sec:superadditive}
 
@@ -409,6 +424,13 @@ At $\kappa > 0$: $\rho > 0$, so $F_\kappa(\mathcal{B})$ escapes $\mathcal{M}_0$ 
 \textbf{Role of observation.} The rank increase from 2 to 3 assumes the observation map $h$ is rich enough to identify the cross-covariance $\Sigma_{12}$. If $h$ only observes $X_1$ (marginal observation), or only observes variances $(\Sigma_{11}, \Sigma_{22})$ without cross-terms, the correlation $\rho$ remains unidentifiable and the rank increase is not observable. This illustrates that both dynamics and observation contribute to the accessible family.
 
 \textbf{Superadditivity.} Each OU process in isolation has a 1-dimensional accessible family (variance only), so $r_1 = r_2 = 1$ and $r_{\oplus} = 2$. The coupled system achieves $r(\kappa) = 3 > r_{\oplus} = 2$: \textit{strict superadditivity}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_ou_covariance.pdf}
+\caption{\textbf{Coupled OU: correlation emerges under coupling.} (A) The correlation $\rho = \kappa/(\gamma + 2\kappa)$ increases monotonically from zero, asymptoting to 0.5. (B) Geometric interpretation: at $\kappa = 0$, the accessible family lies on the independence submanifold ($\rho = 0$); coupling moves the trajectory into the transverse direction.}
+\label{fig:ou}
+\end{figure}
 
 \subsection{Example 2: Kuramoto synchronization (symmetry breaking)}
 \label{sec:kuramoto}

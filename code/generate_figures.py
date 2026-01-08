@@ -274,7 +274,7 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
     Figure 3: OU covariance visualization.
     Shows correlation ρ vs κ and the 3D Gaussian manifold.
     """
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
 
     # Panel A: Correlation vs coupling
     ax = axes[0]
@@ -284,34 +284,34 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
 
     ax.plot(kappa_range, rho, 'b-', linewidth=2.5)
     ax.axhline(y=0.5, color='gray', linestyle='--', alpha=0.5)
-    ax.text(3.05, 0.5, r'$\rho \to 0.5$', fontsize=9, color='gray', va='center')
+    ax.text(2.5, 0.52, r'$\rho \to 0.5$', fontsize=9, color='gray', va='bottom')
 
     ax.fill_between(kappa_range, 0, rho, alpha=0.2, color='blue')
 
     ax.set_xlabel(r'Coupling strength $\kappa$')
-    ax.set_ylabel(r'Correlation $\rho = \Sigma_{12}/\sqrt{\Sigma_{11}\Sigma_{22}}$')
+    ax.set_ylabel(r'Correlation $\rho$')
     ax.set_title('(A) Correlation emerges under coupling')
     ax.set_xlim(0, 3)
-    ax.set_ylim(0, 0.6)
+    ax.set_ylim(0, 0.65)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    # Add formula
-    ax.text(1.5, 0.15, r'$\rho(\kappa) = \frac{\kappa}{\gamma + 2\kappa}$',
+    # Add formula - move lower to avoid collision
+    ax.text(1.8, 0.08, r'$\rho(\kappa) = \frac{\kappa}{\gamma + 2\kappa}$',
             fontsize=11, ha='center',
-            bbox=dict(boxstyle='round', facecolor='white', edgecolor='gray', alpha=0.8))
+            bbox=dict(boxstyle='round', facecolor='white', edgecolor='gray', alpha=0.9))
 
     # Panel B: Schematic of Gaussian manifold
     ax = axes[1]
 
     # Draw axes
-    ax.set_xlim(-0.5, 3.5)
-    ax.set_ylim(-0.5, 3)
+    ax.set_xlim(-0.5, 4)
+    ax.set_ylim(-0.5, 3.2)
 
     # Independence submanifold (ρ = 0 plane)
     ax.fill_between([0, 3], 0.3, 0.7, alpha=0.3, color='blue')
     ax.plot([0, 3], [0.5, 0.5], 'b-', linewidth=2)
-    ax.text(3.1, 0.5, r'$\rho = 0$', fontsize=10, color='blue', va='center')
+    ax.text(3.15, 0.5, r'$\rho = 0$', fontsize=10, color='blue', va='center')
 
     # Trajectory under coupling
     kappa_vis = np.linspace(0, 2, 50)
@@ -323,25 +323,25 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
     ax.scatter([0.5], [0.5], color='red', s=80, zorder=5, marker='o')
     ax.scatter([x_traj[-1]], [y_traj[-1]], color='red', s=80, zorder=5, marker='s')
 
-    ax.annotate(r'$\kappa = 0$', xy=(0.5, 0.5), xytext=(0.2, 0.9),
+    ax.annotate(r'$\kappa = 0$', xy=(0.5, 0.5), xytext=(0.1, 1.1),
                 arrowprops=dict(arrowstyle='->', color='black'),
                 fontsize=9)
-    ax.annotate(r'$\kappa > 0$', xy=(x_traj[-1], y_traj[-1]), xytext=(2.8, 1.8),
+    ax.annotate(r'$\kappa > 0$', xy=(x_traj[-1], y_traj[-1]), xytext=(2.9, 2.0),
                 arrowprops=dict(arrowstyle='->', color='black'),
                 fontsize=9)
 
-    # Axes labels
-    ax.annotate('', xy=(3.2, 0), xytext=(0, 0),
+    # Axes labels - positioned to avoid collision
+    ax.annotate('', xy=(3.5, 0), xytext=(0, 0),
                 arrowprops=dict(arrowstyle='->', color='gray', lw=1.5))
-    ax.text(3.3, 0, r'$\Sigma_{11}, \Sigma_{22}$', fontsize=10, va='center')
+    ax.text(3.6, -0.15, r'$\Sigma_{11}, \Sigma_{22}$', fontsize=10, va='top')
 
     ax.annotate('', xy=(0, 2.8), xytext=(0, 0),
                 arrowprops=dict(arrowstyle='->', color='gray', lw=1.5))
-    ax.text(0.1, 2.9, r'$\rho$', fontsize=10)
+    ax.text(-0.15, 2.95, r'$\rho$', fontsize=10, ha='right')
 
     ax.set_title('(B) Escape from independence submanifold')
     ax.axis('off')
-    ax.legend(loc='upper left')
+    ax.legend(loc='upper left', framealpha=0.9)
 
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches='tight', dpi=300)
