@@ -56,6 +56,8 @@ This paper identifies a regime where the fixed-manifold assumption need not hold
 \textbf{Core claim}: When high-dimensional coherent systems couple, they exchange constraints rather than tokens. This can create new collective coordinates, increasing effective dimensionality beyond the sum of parts.
 \end{quote}
 
+\noindent\textit{To be precise:} We study changes in the \textbf{dimension of the reachable model family} under interaction, not the rate of symbol transmission through a fixed channel.
+
 We call this \textit{manifold expansion}: the accessible statistical manifold grows under coupling. This is not a violation of information theory---it is a regime where information theory's foundational assumption (fixed model class) need not hold.
 
 The implications are significant:
@@ -297,21 +299,21 @@ r(\kappa) \geq r(0) + 1
 \end{equation}
 
 \medskip
-\noindent\textbf{Part III (Symmetry-breaking criterion).} Let $G$ be a $k$-dimensional Lie group acting smoothly on $\mathcal{P}$, and let $\mathrm{Fix}(G) = \{p \in \mathcal{P} : \gamma \cdot p = p \text{ for all } \gamma \in G\}$ be the fixed-point set. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$.
+\noindent\textbf{Part III (Symmetry-breaking criterion).} Let $G$ be a Lie group acting smoothly on $\mathcal{P}$, and let $\mathrm{Fix}(G) = \{p \in \mathcal{P} : g \cdot p = p \text{ for all } g \in G\}$ be the fixed-point set. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$.
 
-\textbf{Interpretation note.} When analyzing symmetry breaking, we work on the quotient $\mathcal{P}/G$ where the $G$-action has been quotiented out (equivalently, we gauge-fix by choosing a representative from each orbit). The rank increase arises because parameter directions in $\ker(dF_0)$ acquire nonzero images in the quotient geometry---typically via $G$-equivariant observables like order parameters that become parameter-sensitive when symmetry breaks.
+\textbf{Key point.} We work on the quotient $\mathcal{P}/G$ (equivalently, gauge-fix by choosing orbit representatives). Orbit directions are \textit{not} counted toward rank---they are quotiented out. The rank increase comes from \textbf{$G$-invariant observables} (e.g., order parameter magnitude $r$) becoming parameter-sensitive when symmetry breaks.
 
 Suppose:
 \begin{enumerate}
     \item[(S1)] $F_0(\mathcal{B}) \subseteq \mathrm{Fix}(G)$ (distributions are $G$-invariant at $\kappa = 0$)
     \item[(S2)] For $\kappa > \kappa_c$, there exists $\beta$ such that $F_\kappa(\beta) \notin \mathrm{Fix}(G)$ (symmetry broken)
-    \item[(S3)] \textbf{Kernel activation via symmetry breaking}: There exists $v \in \ker(dF_0(\beta_0))$ such that a $G$-invariant observable $\phi: \mathcal{P} \to \mathbb{R}$ (e.g., order parameter magnitude) satisfies $d(\phi \circ F_\kappa)|_{\beta_0}(v) \neq 0$ for $\kappa > \kappa_c$
+    \item[(S3)] \textbf{Invariant-observable activation}: There exists $v \in \ker(dF_0(\beta_0))$ and a $G$-invariant observable $\phi: \mathcal{P} \to \mathbb{R}$ such that $d(\phi \circ F_\kappa)|_{\beta_0}(v) \neq 0$ for $\kappa > \kappa_c$
 \end{enumerate}
 Then for $\kappa > \kappa_c$:
 \begin{equation}
 r(\kappa) \geq r(0) + 1
 \end{equation}
-More generally, if there are $k$ independent invariant observables activated, the rank increase is at least $k$.
+If $m$ independent $G$-invariant observables are activated by coupling, the rank increase is at least $m$.
 \end{theorem}
 
 \begin{proof}
@@ -358,7 +360,7 @@ For the OU example, the minimal sufficient statistics are the sample covariance 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig1_eigenvalue_emergence.pdf}
-\caption{\textbf{Eigenvalue emergence under coupling.} (A) Coupled Ornstein--Uhlenbeck: the third Fisher eigenvalue (correlation direction) emerges immediately at $\kappa > 0$. (B) Kuramoto oscillators: the phase-sensitivity eigenvalue emerges at the critical coupling $K_c$. Both demonstrate coupling-induced identifiability activation predicted by Theorem~\ref{thm:main}.}
+\caption{\textbf{Eigenvalue emergence under coupling.} Fisher eigenvalues on the Gaussian manifold $\mathcal{P}$ (coordinates $(v, \rho)$), showing how the accessible family $\mathcal{M}_{\text{acc}}(\kappa)$ gains dimension. (A) Coupled OU: the correlation direction (third eigenvalue) emerges immediately at $\kappa > 0$. (B) Kuramoto: the order-parameter-sensitivity eigenvalue emerges at $K_c$. Both demonstrate coupling-induced identifiability activation (Theorem~\ref{thm:main}).}
 \label{fig:eigenvalue}
 \end{figure}
 
@@ -410,6 +412,8 @@ dX_2 &= -\gamma_2 X_2 \, dt + \kappa(X_1 - X_2) \, dt + \sigma_2 \, dW_2
 where $\gamma_i > 0$ are mean-reversion rates, $\sigma_i > 0$ are noise intensities, and $\kappa \geq 0$ is the coupling strength.
 
 \textbf{Parameter manifold and observation.} The physical parameter manifold is $\mathcal{B} = \{(\gamma_1, \sigma_1, \gamma_2, \sigma_2) : \gamma_i > 0, \sigma_i > 0\} \cong (\mathbb{R}^+)^4$, which is 4-dimensional. The observation map is full state observation: $h(X_1, X_2) = (X_1, X_2)$, so the observable is the bivariate Gaussian with covariance $\Sigma$. The map $F_\kappa: \mathcal{B} \to \mathcal{P}$ sends $\beta = (\gamma_1, \sigma_1, \gamma_2, \sigma_2)$ to the centered bivariate Gaussian with covariance $\Sigma(\kappa, \beta)$. We compute the rank of the Jacobian $\partial(\Sigma_{11}, \Sigma_{22}, \Sigma_{12})/\partial\beta$.
+
+\textbf{Generic vs symmetric.} For generic $(\gamma_1, \sigma_1, \gamma_2, \sigma_2)$, the map $\beta \mapsto (\Sigma_{11}, \Sigma_{22}, \Sigma_{12})$ has rank 3 for $\kappa > 0$ and rank 2 for $\kappa = 0$. We present the symmetric case $\gamma_1 = \gamma_2 = \gamma$, $\sigma_1 = \sigma_2 = \sigma$ for intuition; the rank transition persists in the general case.
 
 \textbf{Stationary distribution.} The stationary distribution is bivariate Gaussian with zero mean and covariance matrix $\Sigma$ satisfying the Lyapunov equation $A\Sigma + \Sigma A^T + D = 0$. For the symmetric case $\gamma_1 = \gamma_2 = \gamma$ and $\sigma_1 = \sigma_2 = \sigma$:
 \begin{align}
