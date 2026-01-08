@@ -98,6 +98,8 @@ We distinguish two conceptual modes of inter-system interaction that motivate ou
 
 The mathematical content of this paper concerns the constraint-exchange regime. We prove that coupling can increase the Fisher rank of an accessible family---a phenomenon invisible to channel-capacity arguments that assume a fixed model class.
 
+\textbf{Scope clarification.} This is an \textit{identifiability/expressivity} claim, not a channel coding claim. We do not argue that mutual information through a coupling channel can exceed capacity bounds. Rather, we show that the \textit{dimension of the identifiable parameter family} can increase under coupling. A concrete illustration: two weakly coupled OU processes may exchange negligible mutual information through the coupling, yet the joint system's identifiable covariance structure has dimension 3 versus dimension 2 for the uncoupled system. The coupling activates a new statistically distinguishable coordinate (the cross-covariance) without requiring high-bandwidth information transfer.
+
 \subsection{Paper outline}
 
 This paper provides:
@@ -209,13 +211,15 @@ These assumptions exclude bifurcation points where stationary distributions spli
 
 \textbf{Our claim}: For high-dimensional coherent systems, the rank of $dF_\kappa$ can increase as $\kappa$ crosses a threshold---the image manifold gains dimension.
 
+\textbf{Technical note on dimensionality.} The ambient space $\mathcal{P}(\mathbb{R}^m)$ of all distributions is infinite-dimensional. For our purposes, we work locally inside a finite-dimensional parametric submanifold $\mathcal{P} \subset \mathcal{P}(\mathbb{R}^m)$ that contains the image of $F_\kappa$. This is the setting of classical information geometry: a \textit{regular} statistical manifold where the Fisher information metric is a nondegenerate inner product on each tangent space \citep{amari2016information}. Our results apply to the finite-dimensional accessible family $\mathcal{M}_{\text{acc}}(\kappa) = \text{Image}(F_\kappa) \subset \mathcal{P}$; we do not require the full machinery of infinite-dimensional information geometry.
+
 \begin{definition}[Manifold expansion]
 \label{def:expansion}
 Define the \textit{generic rank} of $F_\kappa$ as:
 \begin{equation}
 r(\kappa) := \sup_{\beta \in \mathcal{B}} \mathrm{rank}\, dF_\kappa(\beta)
 \end{equation}
-By upper semicontinuity of the differential's rank (the sets $\{\beta : \mathrm{rank}\, dF_\kappa(\beta) \geq r\}$ are open for smooth maps), the set where rank equals the supremum is open and dense. We call $r(\kappa)$ the ``generic rank'' when this open set is nonempty; in applications we restrict to parameter regions where the supremum is attained.
+By upper semicontinuity of rank (the sets $\{\beta : \mathrm{rank}\, dF_\kappa(\beta) \geq r\}$ are open for smooth maps), the set where rank equals the supremum is open. For analytic maps or generic smooth maps this set is also dense; in general applications we restrict to parameter regions where the supremum is attained. When $\mathcal{B}$ is compact, the supremum is a maximum.
 
 \textbf{Manifold expansion} occurs at $\kappa_c$ if the generic rank increases as $\kappa$ crosses $\kappa_c$:
 \begin{equation}
@@ -269,7 +273,7 @@ We now state and prove our main result, which provides checkable criteria for wh
 
 \begin{theorem}[Coupling-induced rank transitions]
 \label{thm:main}
-Let $\mathcal{B}$ be a smooth $d$-dimensional parameter manifold, let $\mathcal{P}$ be a finite-dimensional statistical manifold on observation space $Y$ equipped with the Fisher information metric $g$, and let $F_\kappa: \mathcal{B} \to \mathcal{P}$ be a smooth family of maps indexed by coupling strength $\kappa \geq 0$, where $F_\kappa(\beta) = Q_{(\kappa,\beta)}$ is the distribution of observations under dynamics with parameters $(\kappa, \beta)$.
+Let $\mathcal{B}$ be a smooth $d$-dimensional parameter manifold, let $\mathcal{P}$ be a finite-dimensional \textbf{regular} statistical manifold on observation space $Y$ equipped with the Fisher information metric $g$ (assumed positive-definite on each tangent space), and let $F_\kappa: \mathcal{B} \to \mathcal{P}$ be a smooth family of maps indexed by coupling strength $\kappa \geq 0$, where $F_\kappa(\beta) = Q_{(\kappa,\beta)}$ is the distribution of observations under dynamics with parameters $(\kappa, \beta)$.
 
 \medskip
 \noindent\textbf{Part I (Pullback identity).} The Fisher information matrix on $\mathcal{B}$ induced by the accessible family $\mathcal{M}_{\mathrm{acc}}(\kappa) = \mathrm{Image}(F_\kappa)$ is the pullback of the Fisher metric:
@@ -282,29 +286,32 @@ Consequently:
 \end{equation}
 
 \medskip
-\noindent\textbf{Part II (Constraint-release criterion).} Let $\mathcal{M}_0 \subset \mathcal{P}$ be a smooth submanifold of codimension $c$ (e.g., the independence submanifold). Choose local coordinates on $\mathcal{P}$ near $\mathcal{M}_0$ so that $\mathcal{M}_0 = \{\eta = 0\}$ locally, and write $F_\kappa(\beta) = (f_\kappa(\beta), \eta_\kappa(\beta))$ where $f$ are coordinates along $\mathcal{M}_0$ and $\eta$ are transverse coordinates. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$. Suppose:
+\noindent\textbf{Part II (Transversality criterion).} Let $\mathcal{M}_0 \subset \mathcal{P}$ be a smooth submanifold of codimension $c$ (e.g., the independence submanifold). Choose local coordinates on $\mathcal{P}$ near $\mathcal{M}_0$ so that $\mathcal{M}_0 = \{\eta = 0\}$ locally, and write $F_\kappa(\beta) = (f_\kappa(\beta), \eta_\kappa(\beta))$ where $f$ are coordinates along $\mathcal{M}_0$ and $\eta$ are transverse coordinates. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$. Suppose:
 \begin{enumerate}
     \item[(C1)] $F_0(\mathcal{B}) \subseteq \mathcal{M}_0$, i.e., $\eta_0(\beta) \equiv 0$ (dynamics constrain to submanifold at $\kappa = 0$)
-    \item[(C2)] For $\kappa > \kappa_c$, there exists $\beta$ such that $\eta_\kappa(\beta) \neq 0$ (constraint released)
-    \item[(C3)] \textbf{Kernel activation}: There exists $v \in \ker(df_0(\beta_0))$ such that $d\eta_\kappa(v) \neq 0$ for $\kappa > \kappa_c$
+    \item[(C2)] \textbf{Kernel activation at $\beta_0$}: There exists $v \in T_{\beta_0}\mathcal{B}$ with $df_0(v) = 0$ (hence $v \in \ker(dF_0(\beta_0))$) such that $d\eta_\kappa|_{\beta_0}(v) \neq 0$ for $\kappa > \kappa_c$
 \end{enumerate}
-Then for $\kappa > \kappa_c$:
+Geometrically, (C2) says $F_\kappa$ becomes transverse to $\mathcal{M}_0$ at $F_\kappa(\beta_0)$: the image acquires a component in the normal bundle $N\mathcal{M}_0$. Then for $\kappa > \kappa_c$:
 \begin{equation}
 r(\kappa) \geq r(0) + 1
 \end{equation}
 
 \medskip
-\noindent\textbf{Part III (Symmetry-breaking criterion).} Let $G$ be a $k$-dimensional Lie group acting smoothly on $\mathcal{P}$, and let $\mathrm{Fix}(G) = \{p \in \mathcal{P} : \gamma \cdot p = p \text{ for all } \gamma \in G\}$ be the fixed-point set. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$. Suppose:
+\noindent\textbf{Part III (Symmetry-breaking criterion).} Let $G$ be a $k$-dimensional Lie group acting smoothly on $\mathcal{P}$, and let $\mathrm{Fix}(G) = \{p \in \mathcal{P} : \gamma \cdot p = p \text{ for all } \gamma \in G\}$ be the fixed-point set. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $r(0) = \mathrm{rank}\, dF_0(\beta_0)$.
+
+\textbf{Interpretation note.} When analyzing symmetry breaking, we work on the quotient $\mathcal{P}/G$ where the $G$-action has been quotiented out (equivalently, we gauge-fix by choosing a representative from each orbit). The rank increase arises because parameter directions in $\ker(dF_0)$ acquire nonzero images in the quotient geometry---typically via $G$-equivariant observables like order parameters that become parameter-sensitive when symmetry breaks.
+
+Suppose:
 \begin{enumerate}
     \item[(S1)] $F_0(\mathcal{B}) \subseteq \mathrm{Fix}(G)$ (distributions are $G$-invariant at $\kappa = 0$)
     \item[(S2)] For $\kappa > \kappa_c$, there exists $\beta$ such that $F_\kappa(\beta) \notin \mathrm{Fix}(G)$ (symmetry broken)
-    \item[(S3)] The orbit $G \cdot F_\kappa(\beta)$ has dimension $k$ (free action locally)
-    \item[(S4)] \textbf{Kernel-to-orbit activation}: There exist $k$ linearly independent vectors $v_1, \ldots, v_k \in \ker(dF_0(\beta_0))$ such that $dF_\kappa(v_1), \ldots, dF_\kappa(v_k)$ project to linearly independent vectors in $T_p(G \cdot p)$ for $\kappa > \kappa_c$
+    \item[(S3)] \textbf{Kernel activation via symmetry breaking}: There exists $v \in \ker(dF_0(\beta_0))$ such that a $G$-invariant observable $\phi: \mathcal{P} \to \mathbb{R}$ (e.g., order parameter magnitude) satisfies $d(\phi \circ F_\kappa)|_{\beta_0}(v) \neq 0$ for $\kappa > \kappa_c$
 \end{enumerate}
 Then for $\kappa > \kappa_c$:
 \begin{equation}
-r(\kappa) \geq r(0) + k
+r(\kappa) \geq r(0) + 1
 \end{equation}
+More generally, if there are $k$ independent invariant observables activated, the rank increase is at least $k$.
 \end{theorem}
 
 \begin{proof}
@@ -325,16 +332,16 @@ For the rank equality: the pullback metric $F_\kappa^* g$ is degenerate precisel
 \medskip
 \textbf{Part II.} In local coordinates with $\mathcal{M}_0 = \{\eta = 0\}$, write $F_\kappa(\beta) = (f_\kappa(\beta), \eta_\kappa(\beta))$. At $\kappa = 0$, condition (C1) gives $\eta_0 \equiv 0$, so the image of $dF_0$ lies entirely in the $f$-directions with $\dim(\mathrm{Image}(dF_0(\beta_0))) = r(0)$.
 
-Let $v \in \ker(df_0(\beta_0))$ be as in (C3). At $\kappa = 0$, $dF_0(v) = (df_0(v), d\eta_0(v)) = (0, 0)$, so $v \in \ker(dF_0(\beta_0))$. By (C3), for $\kappa > \kappa_c$, $d\eta_\kappa(v) \neq 0$, so $dF_\kappa(v)$ has a nonzero transverse component.
+Let $v \in \ker(df_0(\beta_0))$ be as in (C2). Since $\eta_0 \equiv 0$, we have $d\eta_0(v) = 0$, hence $dF_0(v) = (0, 0)$ and $v \in \ker(dF_0(\beta_0))$. By (C2), for $\kappa > \kappa_c$, $d\eta_\kappa|_{\beta_0}(v) \neq 0$, so $dF_\kappa(v)$ has a nonzero transverse component.
 
-The key observation is that $T_p\mathcal{P} \cong T_p\mathcal{M}_0 \oplus N_p\mathcal{M}_0$. At $\kappa = 0$, the image of $dF_0$ lies entirely in $T\mathcal{M}_0$. The vector $dF_\kappa(v)$ has a nonzero component in $N\mathcal{M}_0$, so it cannot lie in the span of the old $r(0)$ tangential directions. By continuity of the Gram determinant, the old $r(0)$ directions persist, so $r(\kappa) \geq r(0) + 1$.
+The tangent space decomposes as $T_p\mathcal{P} \cong T_p\mathcal{M}_0 \oplus N_p\mathcal{M}_0$. At $\kappa = 0$, the image of $dF_0$ lies entirely in $T\mathcal{M}_0$. The vector $dF_\kappa(v)$ has a nonzero component in $N\mathcal{M}_0$, so it is linearly independent of the $r(0)$ tangential directions. By continuity, the original $r(0)$ directions persist, so $r(\kappa) \geq r(0) + 1$.
 
 \medskip
-\textbf{Part III.} At $\kappa = 0$, (S1) implies $F_0(\mathcal{B}) \subseteq \mathrm{Fix}(G)$, so $\mathrm{Image}(dF_0) \subseteq T(\mathrm{Fix}(G))$ (no orbit directions).
+\textbf{Part III.} At $\kappa = 0$, (S1) implies $F_0(\mathcal{B}) \subseteq \mathrm{Fix}(G)$, so all $G$-invariant observables $\phi$ are constant on $F_0(\mathcal{B})$: varying $\beta$ does not change $\phi(F_0(\beta))$.
 
-Let $v_1, \ldots, v_k \in \ker(dF_0(\beta_0))$ be as in (S4). At $\kappa = 0$, $dF_0(v_i) = 0$ for all $i$. For $\kappa > \kappa_c$, condition (S4) states that $dF_\kappa(v_1), \ldots, dF_\kappa(v_k)$ project to $k$ linearly independent vectors in the orbit tangent space $T_p(G \cdot p)$.
+Let $v \in \ker(dF_0(\beta_0))$ and $\phi$ be as in (S3). At $\kappa = 0$, $dF_0(v) = 0$, so certainly $d(\phi \circ F_0)(v) = 0$. For $\kappa > \kappa_c$, condition (S3) states that $d(\phi \circ F_\kappa)|_{\beta_0}(v) \neq 0$.
 
-At points $p \notin \mathrm{Fix}(G)$, the tangent space decomposes as $T_p\mathcal{P} \cong T_p(G \cdot p) \oplus (T_p(G \cdot p))^\perp$. The vectors $dF_\kappa(v_i)$ have nonzero projections onto $T_p(G \cdot p)$, so they cannot lie in the span of the old $r(0)$ directions. Therefore $r(\kappa) \geq r(0) + k$.
+Since $\phi$ is $G$-invariant, it descends to the quotient $\mathcal{P}/G$. The nonzero derivative $d(\phi \circ F_\kappa)(v)$ implies that $dF_\kappa(v)$ has a nonzero component in directions that affect $G$-invariant observables. This direction was in $\ker(dF_0)$ but leaves the kernel under coupling, giving $r(\kappa) \geq r(0) + 1$.
 \end{proof}
 
 \begin{corollary}[Operational detection of rank transitions]
@@ -402,16 +409,18 @@ dX_2 &= -\gamma_2 X_2 \, dt + \kappa(X_1 - X_2) \, dt + \sigma_2 \, dW_2
 \end{align}
 where $\gamma_i > 0$ are mean-reversion rates, $\sigma_i > 0$ are noise intensities, and $\kappa \geq 0$ is the coupling strength.
 
+\textbf{Parameter manifold and observation.} The physical parameter manifold is $\mathcal{B} = \{(\gamma_1, \sigma_1, \gamma_2, \sigma_2) : \gamma_i > 0, \sigma_i > 0\} \cong (\mathbb{R}^+)^4$, which is 4-dimensional. The observation map is full state observation: $h(X_1, X_2) = (X_1, X_2)$, so the observable is the bivariate Gaussian with covariance $\Sigma$. The map $F_\kappa: \mathcal{B} \to \mathcal{P}$ sends $\beta = (\gamma_1, \sigma_1, \gamma_2, \sigma_2)$ to the centered bivariate Gaussian with covariance $\Sigma(\kappa, \beta)$. We compute the rank of the Jacobian $\partial(\Sigma_{11}, \Sigma_{22}, \Sigma_{12})/\partial\beta$.
+
 \textbf{Stationary distribution.} The stationary distribution is bivariate Gaussian with zero mean and covariance matrix $\Sigma$ satisfying the Lyapunov equation $A\Sigma + \Sigma A^T + D = 0$. For the symmetric case $\gamma_1 = \gamma_2 = \gamma$ and $\sigma_1 = \sigma_2 = \sigma$:
 \begin{align}
-\Sigma_{11} = \Sigma_{22} &= \frac{\sigma^2}{2\gamma}, \qquad
+\Sigma_{11} = \Sigma_{22} &= \frac{\sigma^2(\gamma + \kappa)}{2\gamma(\gamma + 2\kappa)}, \qquad
 \Sigma_{12} = \frac{\kappa \sigma^2}{2\gamma(\gamma + 2\kappa)}
 \end{align}
-giving correlation $\rho = \kappa/(\gamma + 2\kappa)$.
+giving correlation $\rho = \Sigma_{12}/\Sigma_{11} = \kappa/(\gamma + \kappa)$.
 
-This confirms $\rho(\kappa=0) = 0$ and shows the rank transition explicitly. Computing $\partial\rho/\partial\gamma$:
+This confirms $\rho(\kappa=0) = 0$ and $\rho \to 1$ as $\kappa \to \infty$ (strong coupling induces perfect correlation, as expected physically). Computing $\partial\rho/\partial\gamma$:
 \begin{equation}
-\frac{\partial\rho}{\partial\gamma} = -\frac{\kappa}{(\gamma + 2\kappa)^2} \neq 0 \quad \text{for } \kappa > 0
+\frac{\partial\rho}{\partial\gamma} = -\frac{\kappa}{(\gamma + \kappa)^2} \neq 0 \quad \text{for } \kappa > 0
 \end{equation}
 This nonzero derivative demonstrates kernel activation: a direction that left $\rho$ unchanged at $\kappa = 0$ now varies $\rho$ at $\kappa > 0$.
 
@@ -428,7 +437,7 @@ At $\kappa > 0$: $\rho > 0$, so $F_\kappa(\mathcal{B})$ escapes $\mathcal{M}_0$ 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig3_ou_covariance.pdf}
-\caption{\textbf{Coupled OU: correlation emerges under coupling.} (A) The correlation $\rho = \kappa/(\gamma + 2\kappa)$ increases monotonically from zero, asymptoting to 0.5. (B) Geometric interpretation: at $\kappa = 0$, the accessible family lies on the independence submanifold ($\rho = 0$); coupling moves the trajectory into the transverse direction.}
+\caption{\textbf{Coupled OU: correlation emerges under coupling.} (A) The correlation $\rho = \kappa/(\gamma + \kappa)$ increases monotonically from zero, asymptoting to 1 as $\kappa \to \infty$. (B) Geometric interpretation: at $\kappa = 0$, the accessible family lies on the independence submanifold ($\rho = 0$); coupling moves the trajectory into the transverse direction.}
 \label{fig:ou}
 \end{figure}
 
@@ -451,13 +460,12 @@ where the order parameter $re^{i\Psi} = \int e^{i\theta} \rho(\theta, \omega, t)
 
 \textbf{Verification of Theorem~\ref{thm:main} Part III.}
 \begin{itemize}
-\item (S1): For $K < K_c$, $F_K(\mathcal{B})$ is contained in the $S^1$-fixed point set (the incoherent state).
-\item (S2): For $K > K_c$, the synchronized stationary solutions (gauge-fixed to $\Psi = 0$) break $S^1$ symmetry in the sense that $r > 0$.
-\item (S3): The $S^1$-orbit of synchronized solutions is 1-dimensional.
-\item (S4) \textbf{Kernel-to-orbit activation}: Consider a 1-parameter family of frequency distributions $\nu_s$ (e.g., shifting the mean $\omega_0 \mapsto \omega_0 + s$). For $K < K_c$, varying $s$ leaves the incoherent distribution unchanged, so $\partial F_K/\partial s = 0$. For $K > K_c$, the synchronized solution's mean phase responds to frequency shifts: $\partial \Psi/\partial s \neq 0$, activating the orbit direction.
+\item (S1): For $K < K_c$, $F_K(\mathcal{B})$ is contained in the $S^1$-fixed point set (the incoherent state with $r = 0$).
+\item (S2): For $K > K_c$, the synchronized stationary solutions have $r > 0$, breaking $S^1$ symmetry.
+\item (S3) \textbf{Kernel activation via order parameter}: Consider varying the noise intensity $D$ or the frequency spread $\sigma_\omega$. For $K < K_c$, these parameters do not affect the (unique) incoherent distribution, so they lie in $\ker(dF_K)$. For $K > K_c$, these parameters affect the order parameter magnitude: $\partial r/\partial D \neq 0$ and $\partial r/\partial \sigma_\omega \neq 0$. The $S^1$-invariant observable $\phi = r$ becomes parameter-sensitive.
 \end{itemize}
 
-The theorem predicts: $r(K) \geq r(0) + 1$ for $K > K_c$. The ``$+1$'' comes from the orbit direction becoming identifiable.
+The theorem predicts: $r(K) \geq r(0) + 1$ for $K > K_c$. The ``$+1$'' comes from the order parameter magnitude becoming identifiable---a $G$-invariant observable that was constant on the incoherent manifold but varies with parameters on the synchronized manifold.
 
 \textbf{Key difference from OU.} In the OU example (Part II), any $\kappa > 0$ immediately releases the constraint: $\kappa_c = 0$. In Kuramoto (Part III), the symmetry persists for $0 < K < K_c$; manifold expansion occurs at a \textit{genuine} critical threshold $K_c > 0$.
 
@@ -481,6 +489,8 @@ When coupling creates new coordinates:
 We define \textit{complexity} $C$ of a statistical family $\mathcal{M}$ as the Fisher rank: the dimension of the identifiable tangent space. This is coordinate-invariant and intrinsic to the manifold geometry.
 
 \textbf{Clarification.} Fisher rank measures \textit{identifiability dimension}---the number of statistically distinguishable directions---not computational or algorithmic complexity. We use ``complexity'' in the sense of ``accessible degrees of freedom under observation,'' following the information-geometric tradition where model dimension is a natural complexity measure \citep{amari2016information}.
+
+\textbf{Rank vs.\ effective rank.} Fisher rank is a binary notion: a direction is either in the kernel (rank 0 contribution) or not (rank 1 contribution). It does not distinguish ``sloppy'' directions (small but nonzero eigenvalues) from ``stiff'' directions (large eigenvalues). In finite-sample settings, practical identifiability depends on whether eigenvalues exceed a noise floor. Our theoretical results concern the transition from $\lambda = 0$ to $\lambda > 0$; Conjecture~\ref{conj:acceleration} addresses the empirical signature via an $\epsilon$-threshold. For applications, one would use an \textit{effective rank} (e.g., number of eigenvalues above noise level) rather than exact rank.
 \end{definition}
 
 \begin{conjecture}[Eigenvalue emergence under coupling]

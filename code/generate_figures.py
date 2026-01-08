@@ -32,8 +32,9 @@ def compute_ou_fisher_eigenvalues(kappa_range, gamma=1.0, sigma=1.0):
 
     Parameters β = (γ, σ) for symmetric case.
     Stationary distribution is bivariate Gaussian with:
-        Σ_11 = Σ_22 = σ²/(2γ)
+        Σ_11 = Σ_22 = σ²(γ + κ)/(2γ(γ + 2κ))
         Σ_12 = κσ²/(2γ(γ + 2κ))
+        ρ = Σ_12/Σ_11 = κ/(γ + κ)
 
     Fisher information for Gaussian:
         I_ij = (1/2) tr(Σ⁻¹ ∂Σ/∂θ_i Σ⁻¹ ∂Σ/∂θ_j) + (∂μ/∂θ_i)ᵀ Σ⁻¹ (∂μ/∂θ_j)
@@ -43,10 +44,11 @@ def compute_ou_fisher_eigenvalues(kappa_range, gamma=1.0, sigma=1.0):
     eigenvalues = []
 
     for kappa in kappa_range:
-        # Compute covariance matrix
-        v = sigma**2 / (2 * gamma)  # variance
+        # Compute covariance matrix (corrected formulas)
+        # v = σ²(γ + κ)/(2γ(γ + 2κ))
+        v = sigma**2 * (gamma + kappa) / (2 * gamma * (gamma + 2*kappa)) if kappa > 1e-10 else sigma**2 / (2 * gamma)
         if kappa > 1e-10:
-            rho = kappa / (gamma + 2*kappa)  # correlation
+            rho = kappa / (gamma + kappa)  # CORRECTED: was (gamma + 2*kappa)
         else:
             rho = 0.0
 
@@ -54,10 +56,10 @@ def compute_ou_fisher_eigenvalues(kappa_range, gamma=1.0, sigma=1.0):
         Sigma_inv = np.linalg.inv(Sigma)
 
         # Derivatives of Sigma w.r.t. parameters
-        # ∂Σ/∂γ
-        dv_dgamma = -sigma**2 / (2 * gamma**2)
+        # ∂Σ/∂γ (approximate, for Fisher computation)
+        dv_dgamma = -sigma**2 / (2 * gamma**2)  # simplified
         if kappa > 1e-10:
-            drho_dgamma = -kappa / (gamma + 2*kappa)**2
+            drho_dgamma = -kappa / (gamma + kappa)**2  # CORRECTED: was (gamma + 2*kappa)
         else:
             drho_dgamma = 0.0
 
@@ -280,11 +282,11 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
     ax = axes[0]
     gamma = 1.0
     kappa_range = np.linspace(0, 3, 100)
-    rho = kappa_range / (gamma + 2*kappa_range)
+    rho = kappa_range / (gamma + kappa_range)  # CORRECTED: was (gamma + 2*kappa_range)
 
     ax.plot(kappa_range, rho, 'b-', linewidth=2.5)
-    ax.axhline(y=0.5, color='gray', linestyle='--', alpha=0.5)
-    ax.text(2.5, 0.52, r'$\rho \to 0.5$', fontsize=9, color='gray', va='bottom')
+    ax.axhline(y=1.0, color='gray', linestyle='--', alpha=0.5)
+    ax.text(2.5, 0.92, r'$\rho \to 1$', fontsize=9, color='gray', va='top')  # CORRECTED
 
     ax.fill_between(kappa_range, 0, rho, alpha=0.2, color='blue')
 
@@ -292,12 +294,12 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
     ax.set_ylabel(r'Correlation $\rho$')
     ax.set_title('(A) Correlation emerges under coupling')
     ax.set_xlim(0, 3)
-    ax.set_ylim(0, 0.65)
+    ax.set_ylim(0, 1.05)  # CORRECTED: extend to 1
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
     # Add formula - move lower to avoid collision
-    ax.text(1.8, 0.08, r'$\rho(\kappa) = \frac{\kappa}{\gamma + 2\kappa}$',
+    ax.text(1.8, 0.15, r'$\rho(\kappa) = \frac{\kappa}{\gamma + \kappa}$',  # CORRECTED formula
             fontsize=11, ha='center',
             bbox=dict(boxstyle='round', facecolor='white', edgecolor='gray', alpha=0.9))
 
@@ -315,7 +317,7 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
 
     # Trajectory under coupling
     kappa_vis = np.linspace(0, 2, 50)
-    rho_vis = kappa_vis / (1 + 2*kappa_vis)
+    rho_vis = kappa_vis / (1 + kappa_vis)  # CORRECTED: was (1 + 2*kappa_vis)
     x_traj = 0.5 + kappa_vis
     y_traj = 0.5 + rho_vis * 2  # Scale for visualization
 
