@@ -1,0 +1,25 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+texput.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Springer style files (included but not tracked)
+# svjour3.cls
+# svglov3.clo
