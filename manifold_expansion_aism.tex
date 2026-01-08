@@ -35,7 +35,7 @@
 \maketitle
 
 \begin{abstract}
-Many information-theoretic bounds assume a fixed statistical model class. We identify a regime where this assumption fails: when high-dimensional systems couple, the identifiable parameter set changes because the image rank of the dynamics-to-distribution map changes. We formalize this as \textit{manifold expansion}: coupling-induced increase in Fisher rank. Operationally, this means new score directions become nonzero---statistics that were previously insensitive to parameter variation become informative under coupling. Our main theorem provides checkable criteria for rank transitions: the \textit{transversality criterion} (coupling moves the accessible family off a constraint submanifold) and the \textit{symmetry-breaking criterion} (coupling breaks a group invariance). We prove Fisher rank equals Jacobian rank, so transitions are coordinate-invariant and detectable via eigenvalue emergence in the Fisher information matrix. Two examples demonstrate superadditive complexity: coupled Ornstein--Uhlenbeck processes (transversality, $\kappa_c = 0$) and Kuramoto oscillators (symmetry breaking, $\kappa_c > 0$).
+Many information-theoretic bounds assume a fixed statistical model class. We identify a regime where this assumption fails: when high-dimensional systems couple, the identifiable parameter set changes because the image rank of the dynamics-to-distribution map changes. We formalize this as \textit{manifold expansion}: coupling-induced increase in Fisher rank. Operationally, this means new score directions become nonzero---statistics that were previously insensitive to parameter variation become informative under coupling. Our main theorem provides checkable criteria for rank transitions: the \textit{transversality criterion} (coupling moves the accessible family off a constraint submanifold) and the \textit{symmetry-breaking criterion} (coupling breaks a group invariance). Since Fisher rank equals Jacobian rank (via the pullback identity), transitions are coordinate-invariant and detectable via eigenvalue emergence in the Fisher information matrix. Two examples demonstrate superadditive complexity: coupled Ornstein--Uhlenbeck processes (transversality, $\kappa_c = 0$) and Kuramoto oscillators (symmetry breaking, $\kappa_c > 0$).
 \keywords{Fisher information metric \and Parameter identifiability \and Superadditivity \and Coupled dynamical systems \and Statistical manifolds}
 \end{abstract}
 
@@ -108,7 +108,7 @@ This paper provides:
 \begin{enumerate}
     \item \textbf{Section~\ref{sec:background}}: Background on information geometry and the fixed-manifold assumption
     \item \textbf{Section~\ref{sec:expansion}}: Formal setup---accessible families, collective coordinates, and the main theorem on coupling-induced rank transitions (Theorem~\ref{thm:main})
-    \item \textbf{Section~\ref{sec:consequences}}: Consequences for complexity growth, including the complexity acceleration conjecture (Conjecture~\ref{conj:acceleration})
+    \item \textbf{Section~\ref{sec:consequences}}: Consequences for complexity growth, including the eigenvalue emergence corollary (Corollary~\ref{cor:eigenvalue})
     \item \textbf{Section~\ref{sec:discussion}}: Discussion, testable predictions, and scope
 \end{enumerate}
 
@@ -293,7 +293,9 @@ Consequently:
     \item[(C1)] $F_0(\mathcal{B}) \subseteq \mathcal{M}_0$, i.e., $\eta_0(\beta) \equiv 0$ (dynamics constrain to submanifold at $\kappa = 0$)
     \item[(C2)] \textbf{Kernel activation at $\beta_0$}: There exists $v \in T_{\beta_0}\mathcal{B}$ with $df_0(v) = 0$ (hence $v \in \ker(dF_0(\beta_0))$) such that $d\eta_\kappa|_{\beta_0}(v) \neq 0$ for $\kappa > \kappa_c$
 \end{enumerate}
-Geometrically, (C2) says $F_\kappa$ becomes transverse to $\mathcal{M}_0$ at $F_\kappa(\beta_0)$: the image acquires a component in the normal bundle $N\mathcal{M}_0$. Then for $\kappa > \kappa_c$:
+Geometrically, (C2) says $F_\kappa$ becomes transverse to $\mathcal{M}_0$ at $F_\kappa(\beta_0)$: the image acquires a component in the normal bundle $N\mathcal{M}_0$.
+
+Then for $\kappa > \kappa_c$:
 \begin{equation}
 r(\kappa) \geq r(0) + 1
 \end{equation}
@@ -494,17 +496,17 @@ We define \textit{complexity} $C$ of a statistical family $\mathcal{M}$ as the F
 
 \textbf{Clarification.} Fisher rank measures \textit{identifiability dimension}---the number of statistically distinguishable directions---not computational or algorithmic complexity. We use ``complexity'' in the sense of ``accessible degrees of freedom under observation,'' following the information-geometric tradition where model dimension is a natural complexity measure \citep{amari2016information}.
 
-\textbf{Rank vs.\ effective rank.} Fisher rank is a binary notion: a direction is either in the kernel (rank 0 contribution) or not (rank 1 contribution). It does not distinguish ``sloppy'' directions (small but nonzero eigenvalues) from ``stiff'' directions (large eigenvalues). In finite-sample settings, practical identifiability depends on whether eigenvalues exceed a noise floor. Our theoretical results concern the transition from $\lambda = 0$ to $\lambda > 0$; Conjecture~\ref{conj:acceleration} addresses the empirical signature via an $\epsilon$-threshold. For applications, one would use an \textit{effective rank} (e.g., number of eigenvalues above noise level) rather than exact rank.
+\textbf{Rank vs.\ effective rank.} Fisher rank is a binary notion: a direction is either in the kernel (rank 0 contribution) or not (rank 1 contribution). It does not distinguish ``sloppy'' directions (small but nonzero eigenvalues) from ``stiff'' directions (large eigenvalues). In finite-sample settings, practical identifiability depends on whether eigenvalues exceed a noise floor. Our theoretical results concern the transition from $\lambda = 0$ to $\lambda > 0$; Corollary~\ref{cor:eigenvalue} makes this explicit. For applications, one would use an \textit{effective rank} (e.g., number of eigenvalues above noise level) rather than exact rank.
 \end{definition}
 
-\begin{conjecture}[Eigenvalue emergence under coupling]
-\label{conj:acceleration}
-In regimes where the accessible family $\mathcal{M}_{\text{acc}}(\kappa)$ can be embedded in a fixed parameterization across $\kappa$, eigenvalue emergence provides a concrete signature. As coupling strength $\kappa$ crosses a critical threshold $\kappa_c$, one or more Fisher eigenvalues emerge from zero:
+\begin{corollary}[Eigenvalue emergence under coupling]
+\label{cor:eigenvalue}
+In regimes where the accessible family $\mathcal{M}_{\text{acc}}(\kappa)$ can be embedded in a fixed parameterization across $\kappa$, rank increase (Theorem~\ref{thm:main}) manifests as eigenvalue emergence. As coupling strength $\kappa$ crosses a critical threshold $\kappa_c$, one or more Fisher eigenvalues emerge from zero:
 \begin{equation}
-\lambda_k(\kappa_c^-) < \epsilon \quad \text{and} \quad \lambda_k(\kappa_c^+) > \epsilon
+\lambda_k(\kappa_c^-) = 0 \quad \text{and} \quad \lambda_k(\kappa_c^+) > 0
 \end{equation}
-This implies rank increase as coupling activates previously degenerate interaction coordinates.
-\end{conjecture}
+In finite-sample settings, emergence is detected when eigenvalues cross a noise threshold $\epsilon > 0$.
+\end{corollary}
 
 \subsection{Heuristic scaling: colony dynamics}
 
