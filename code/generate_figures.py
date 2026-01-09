@@ -16,6 +16,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.patches as mpatches
 from scipy.linalg import solve_continuous_lyapunov
+from pathlib import Path
 
 # Style settings
 plt.rcParams['font.family'] = 'serif'
@@ -104,17 +105,19 @@ def compute_ou_fisher_eigenvalues(kappa_range, gamma=1.0, sigma=1.0):
 
 def compute_kuramoto_fisher_eigenvalues(K_range, K_c=1.0, D=0.5):
     """
-    Compute Fisher information eigenvalues for Kuramoto model.
+    Compute Fisher information eigenvalue for Kuramoto model.
 
-    Simplified model: order parameter r emerges at K > K_c.
-    Below K_c: r = 0, Ψ unidentifiable (Fisher eigenvalue = 0)
-    Above K_c: r > 0, Ψ identifiable (Fisher eigenvalue > 0)
+    Observation: order parameter magnitude r only (after gauge-fixing Ψ = 0).
+    Since r is a 1D statistic, the pullback Fisher on B has at most rank 1.
+
+    Below K_c: r = 0 for ALL parameter values, so F_K maps to a single point.
+               Hence rank = 0 and Fisher eigenvalue = 0.
+    Above K_c: r > 0 and depends on parameters.
+               Hence rank = 1 and one eigenvalue emerges.
 
     We model this as:
         r(K) = 0 for K < K_c
         r(K) = sqrt(1 - K_c/K) for K >= K_c (standard mean-field result)
-
-    Fisher information for Ψ scales with r² (phase sensitivity requires coherence)
     """
     eigenvalues = []
 
@@ -124,22 +127,27 @@ def compute_kuramoto_fisher_eigenvalues(K_range, K_c=1.0, D=0.5):
         else:
             r = np.sqrt(1 - K_c / K) if K > K_c else 0.0
 
-        # Fisher eigenvalues:
-        # λ_1: always identifiable (related to D or frequency distribution)
-        # λ_2: phase sensitivity, scales with r²
-        lambda_1 = 1.0 / D  # noise parameter always identifiable
-        lambda_2 = r**2 * K / D  # phase sensitivity emerges with r
+        # Fisher eigenvalue (only one, since r is 1D observation):
+        # Below K_c: λ = 0 (r = 0 regardless of parameters, rank 0)
+        # Above K_c: λ > 0 (r depends on parameters, rank 1)
+        if r < 1e-10:
+            lambda_1 = 0.0
+        else:
+            # Sensitivity of r to noise parameter D
+            # dr/dD scales with r, so Fisher info scales with r²
+            lambda_1 = r**2 / D
 
-        eigenvalues.append([lambda_1, lambda_2])
+        eigenvalues.append(lambda_1)
 
     return np.array(eigenvalues)
 
 
-def fig1_eigenvalue_emergence(save_path='../figures/fig1_eigenvalue_emergence.pdf'):
+def fig2_eigenvalue_emergence(save_path='../figures/fig2_eigenvalue_emergence.pdf'):
     """
     Figure 1: Eigenvalue emergence under coupling.
     Side-by-side: OU (κ_c = 0) and Kuramoto (K_c > 0)
     """
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 
     # Panel A: Coupled OU
@@ -172,25 +180,23 @@ def fig1_eigenvalue_emergence(save_path='../figures/fig1_eigenvalue_emergence.pd
             fontsize=8, color='green', alpha=0.7)
 
     # Panel B: Kuramoto
+    # Since we observe only r (1D), at most rank 1 is achievable
     ax = axes[1]
     K_c = 1.0
     K_range = np.linspace(0, 3, 100)
     eigs = compute_kuramoto_fisher_eigenvalues(K_range, K_c=K_c)
 
-    colors = ['#2E86AB', '#F18F01']
-    labels = [r'$\lambda_1$ (noise)', r'$\lambda_2$ (phase)']
-
-    for i in range(2):
-        ax.plot(K_range, eigs[:, i], color=colors[i], linewidth=2, label=labels[i])
+    # Single eigenvalue: rank 0 → 1 transition at K_c
+    ax.plot(K_range, eigs, color='#2E86AB', linewidth=2, label=r'$\lambda_1$')
 
     ax.axvline(x=K_c, color='gray', linestyle='--', alpha=0.5, linewidth=1)
     ax.annotate(r'$K_c$', xy=(K_c + 0.1, 0.95), xycoords=('data', 'axes fraction'),
                 fontsize=10, color='gray')
 
     ax.set_xlabel(r'Coupling strength $K$')
-    ax.set_ylabel(r'Fisher eigenvalue $\lambda_k$')
-    ax.set_title('(B) Kuramoto oscillators\n(Symmetry-breaking criterion)')
-    ax.legend(loc='right')
+    ax.set_ylabel(r'Fisher eigenvalue $\lambda$')
+    ax.set_title('(B) Kuramoto oscillators\n(Symmetry-breaking, rank $0 \\to 1$)')
+    ax.legend(loc='upper right')
     ax.set_xlim(0, 3)
     ax.set_ylim(0, None)
     ax.spines['top'].set_visible(False)
@@ -198,8 +204,8 @@ def fig1_eigenvalue_emergence(save_path='../figures/fig1_eigenvalue_emergence.pd
 
     # Highlight emergence region
     ax.fill_between([K_c, K_c + 0.5], 0, ax.get_ylim()[1], alpha=0.1, color='green')
-    ax.text(K_c + 0.25, ax.get_ylim()[1]*0.5, 'Emergence\nregion', ha='center',
-            fontsize=8, color='green', alpha=0.7)
+    ax.text(K_c + 0.25, ax.get_ylim()[1]*0.5, 'Rank\n$0 \\to 1$', ha='center',
+            fontsize=9, color='green', alpha=0.8)
 
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches='tight', dpi=300)
@@ -208,11 +214,12 @@ def fig1_eigenvalue_emergence(save_path='../figures/fig1_eigenvalue_emergence.pd
     plt.close()
 
 
-def fig2_geometric_schematic(save_path='../figures/fig2_geometric_schematic.pdf'):
+def fig1_geometric_schematic(save_path='../figures/fig1_geometric_schematic.pdf'):
     """
     Figure 2: Geometric schematic of manifold expansion.
     Shows M_0 (constraint submanifold) and how F_κ escapes it.
     """
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(8, 6))
 
     # Draw the ambient space P (as a box outline)
@@ -282,6 +289,7 @@ def fig3_ou_covariance(save_path='../figures/fig3_ou_covariance.pdf'):
     Figure 3: OU covariance visualization.
     Shows correlation ρ vs κ and the 3D Gaussian manifold.
     """
+    Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
 
     # Panel A: Correlation vs coupling
@@ -362,8 +370,8 @@ if __name__ == '__main__':
     print("Generating figures for Manifold Expansion paper...")
     print("=" * 50)
 
-    fig1_eigenvalue_emergence()
-    fig2_geometric_schematic()
+    fig2_eigenvalue_emergence()
+    fig1_geometric_schematic()
     fig3_ou_covariance()
 
     print("=" * 50)

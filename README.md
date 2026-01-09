@@ -1,17 +1,17 @@
-# Manifold Expansion via High-Dimensional Coupling
+# Coupling-Induced Rank Transitions in Statistical Manifolds
 
-**When coupled systems escape constraint submanifolds, new statistical coordinates become identifiable.**
+**When does coupling between dynamical systems increase the rank of the Fisher information matrix?**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 ## Overview
 
-Many information-theoretic bounds assume a fixed statistical model class. This paper identifies a regime where this assumption fails: when high-dimensional systems couple, the identifiable parameter set changes because the **Fisher rank** of the dynamics-to-distribution map increases.
+Consider a family of dynamical systems parameterized by coupling strength κ and physical parameters β. Each configuration induces a distribution Q on observations. The **dynamics-to-distribution map** F_κ: β → Q determines which distributions are accessible at coupling κ.
 
-We call this **manifold expansion**: coupling-induced increase in Fisher rank.
+**Question:** When does coupling increase rank(dF_κ)?
 
-**Key equation:** Fisher rank = Jacobian rank of the map F_κ: β → Q_{(κ,β)}
+We provide two checkable criteria: the *transversality criterion* (coupling moves the image off a constraint submanifold) and the *symmetry-breaking criterion* (coupling breaks a group invariance). Since Fisher rank = Jacobian rank (Lemma 1), rank transitions are coordinate-invariant and detectable as eigenvalue emergence in the Fisher information matrix.
 
 ## Key Results
 
@@ -25,38 +25,45 @@ We call this **manifold expansion**: coupling-induced increase in Fisher rank.
 
 | Figure | Description |
 |--------|-------------|
-| ![Eigenvalue emergence](figures/fig1_eigenvalue_emergence.png) | Fisher eigenvalues emerging under coupling |
-| ![Geometric schematic](figures/fig2_geometric_schematic.png) | Manifold expansion geometry |
-| ![OU covariance](figures/fig3_ou_covariance.png) | Correlation emergence in coupled OU |
+| ![Geometric schematic](figures/fig1_geometric_schematic.png) | Rank transition geometry |
+| ![Eigenvalue emergence](figures/fig2_eigenvalue_emergence.png) | Fisher eigenvalues emerging under coupling |
+| ![OU covariance](figures/fig3_ou_covariance.png) | Correlation coordinate in coupled OU |
 
 ## Repository Structure
 
 ```
-manifold-expansion/
-├── manifold_expansion_aism.pdf    # Main paper (AISM format)
-├── manifold_expansion_aism.tex    # LaTeX source
+coupling-rank-transitions/
+├── coupling_rank_transitions.pdf    # Main paper (AISM format)
+├── coupling_rank_transitions.tex    # LaTeX source
 ├── code/
-│   └── generate_figures.py        # Figure generation script
+│   ├── generate_figures.py        # Figure generation script
+│   └── operational_validation.py  # Pullback Fisher computation
 ├── figures/
-│   ├── fig1_eigenvalue_emergence.pdf
-│   ├── fig2_geometric_schematic.pdf
-│   └── fig3_ou_covariance.pdf
+│   ├── fig1_geometric_schematic.pdf
+│   ├── fig2_eigenvalue_emergence.pdf
+│   ├── fig3_ou_covariance.pdf
+│   └── fig4_operational_validation.pdf
+├── requirements.txt
 └── README.md
 ```
 
 ## Running the Code
 
 ```bash
-# Generate all figures
+# Generate schematic figures (Fig 1-3)
 cd code
 python3 generate_figures.py
+
+# Generate operational validation figure (Fig 4)
+# This computes the actual pullback Fisher I_B = J^T g J
+python3 operational_validation.py
 ```
 
-**Requirements:** numpy, matplotlib, scipy
+**Requirements:** See `requirements.txt` (numpy, matplotlib, scipy)
 
 ## Paper
 
-**Title:** Communication Beyond Information: Manifold Expansion via High-Dimensional Coupling
+**Title:** Coupling-Induced Rank Transitions in Statistical Manifolds
 
 **Target journal:** Annals of the Institute of Statistical Mathematics
 
@@ -67,8 +74,8 @@ python3 generate_figures.py
 ## Citation
 
 ```bibtex
-@article{todd2026manifold,
-  title={Communication Beyond Information: Manifold Expansion via High-Dimensional Coupling},
+@article{todd2026coupling,
+  title={Coupling-Induced Rank Transitions in Statistical Manifolds},
   author={Todd, Ian},
   journal={Annals of the Institute of Statistical Mathematics},
   year={2026},

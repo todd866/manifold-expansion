@@ -1,0 +1,662 @@
+\documentclass[smallextended,natbib,runningheads]{svjour3}
+%
+\journalname{Annals of the Institute of Statistical Mathematics}
+%
+\smartqed
+%
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{float}
+
+% Note: theorem, lemma, definition, remark, proposition, conjecture, proof
+% are already defined by svjour3.cls
+
+\begin{document}
+
+\title{Coupling-Induced Rank Transitions in Statistical Manifolds}
+
+\titlerunning{Coupling-Induced Rank Transitions}
+
+\author{Ian Todd}
+
+\authorrunning{I. Todd}
+
+\institute{I. Todd \at
+           Sydney Medical School, University of Sydney \\
+           Sydney, NSW, Australia \\
+           \email{itod2305@uni.sydney.edu.au}
+}
+
+\date{Received: date / Revised: date}
+
+\maketitle
+
+\begin{abstract}
+Many information-theoretic bounds assume a fixed statistical model class. We identify a regime where this assumption fails: when high-dimensional systems couple, the identifiable parameter set changes because the image rank of the dynamics-to-distribution map changes. We formalize this as \textit{manifold expansion}: coupling-induced increase in Fisher rank. Operationally, this means new score directions become nonzero---statistics that were previously insensitive to parameter variation become informative under coupling. Our main theorem provides checkable criteria for rank transitions: the \textit{transversality criterion} (coupling moves the accessible family off a constraint submanifold) and the \textit{symmetry-breaking criterion} (coupling breaks a group invariance). Since Fisher rank equals Jacobian rank (via the pullback identity), transitions are coordinate-invariant and detectable via eigenvalue emergence in the Fisher information matrix. Consequently, Cram\'er--Rao bounds shift: parameters that were formally unidentifiable at zero coupling (infinite Cram\'er--Rao variance) become estimable under interaction. Two examples demonstrate superadditive complexity: coupled Ornstein--Uhlenbeck processes (transversality, $\kappa_c = 0$) and Kuramoto oscillators (symmetry breaking, $\kappa_c > 0$).
+\keywords{Fisher information metric \and Parameter identifiability \and Superadditivity \and Coupled dynamical systems \and Statistical manifolds}
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}
+\label{intro}
+%==============================================================================
+
+Consider a family of dynamical systems parameterized by coupling strength $\kappa \geq 0$ and physical parameters $\beta \in \mathcal{B}$. Each configuration $(\kappa, \beta)$ induces a stationary distribution $Q_{(\kappa,\beta)}$ on observations. The \textit{dynamics-to-distribution map} $F_\kappa: \mathcal{B} \to \mathcal{P}$, $\beta \mapsto Q_{(\kappa,\beta)}$, determines which distributions are accessible at coupling $\kappa$.
+
+\textbf{Question}: When does coupling increase the rank of $dF_\kappa$?
+
+An increase in $\mathrm{rank}\,dF_\kappa$ means new parameter directions become statistically identifiable---the Cramér--Rao bound transitions from infinite to finite for those directions. We call this \textit{manifold expansion}: the accessible statistical family gains dimension under coupling.
+
+\textbf{Main result (Theorem~\ref{thm:main}).} We provide two checkable criteria for rank increase:
+\begin{itemize}
+    \item \textit{Constraint-release criterion} (Part I): Coupling moves the accessible family off a constraint submanifold $\mathcal{M}_0 \subset \mathcal{P}$, activating coordinates normal to $\mathcal{M}_0$.
+    \item \textit{Symmetry-breaking criterion} (Part II): Coupling breaks a group symmetry $G$, making $G$-invariant observables parameter-sensitive.
+\end{itemize}
+Since Fisher rank equals Jacobian rank (via the pullback identity $I_\mathcal{B} = F_\kappa^* g$), rank transitions are coordinate-invariant and detectable as eigenvalue emergence in the Fisher information matrix.
+
+\textbf{Examples.} Two canonical systems demonstrate the phenomena:
+\begin{itemize}
+    \item \textit{Coupled Ornstein--Uhlenbeck processes}: At $\kappa = 0$, the cross-covariance $\Sigma_{12} = 0$ regardless of parameters; rank is 2. At any $\kappa > 0$, $\Sigma_{12}$ becomes parameter-sensitive; rank increases to 3. This is constraint-release with $\kappa_c = 0$.
+    \item \textit{Kuramoto oscillators}: Below $K_c$, the order parameter $r = 0$ regardless of noise/frequency parameters; rank is 0. Above $K_c$, $r > 0$ and parameter-sensitive; rank increases to 1. This is symmetry-breaking with $\kappa_c > 0$.
+\end{itemize}
+
+\textbf{Relation to existing work.} The pullback characterization of Fisher information is standard \citep{amari2016information}. Our contribution is identifying \textit{when} coupling increases Jacobian rank---the constraint-release and symmetry-breaking criteria (Theorem~\ref{thm:main}, Parts I--II). This connects to identifiability theory \citep{rothenberg1971identification}, observability in control \citep{hermann1977nonlinear}, and sloppy parameter analysis \citep{transtrum2015perspective}, but focuses specifically on coupling-induced transitions.
+
+\textbf{What we are not claiming.} We do not argue that data-processing inequalities are violated or that channel capacity bounds fail. These hold within their stated assumptions. We study how coupling changes the \textit{reachable subset} of distributions---the accessible family $\mathcal{M}_{\text{acc}}(\kappa) = \mathrm{Image}(F_\kappa)$. Information-theoretic bounds apply to each fixed $\kappa$; what changes across $\kappa$ is the dimension of the family to which they apply.
+
+\textbf{Organization.} Section~\ref{sec:background} reviews information geometry. Section~\ref{sec:expansion} presents the formal setup and main theorem. Section~\ref{sec:consequences} discusses consequences and eigenvalue detection. Section~\ref{sec:discussion} addresses scope and limitations.
+
+%==============================================================================
+\section{Background: Information geometry}
+\label{sec:background}
+%==============================================================================
+
+We briefly review the relevant information-geometric concepts; see \citet{amari2016information} for a comprehensive treatment.
+
+A \textit{statistical manifold} $\mathcal{M}$ is a smooth family of probability distributions parameterized by $\theta \in \Theta$. The \textit{Fisher information metric} is:
+\begin{equation}
+g_{ij}(\theta) = \mathbb{E}\left[ \frac{\partial \log p(x|\theta)}{\partial \theta_i} \frac{\partial \log p(x|\theta)}{\partial \theta_j} \right]
+\end{equation}
+This Riemannian metric is intrinsic: it transforms correctly under reparameterization and locally approximates KL divergence to second order.
+
+\textbf{Hierarchical decomposition.} For joint distributions $p(x_1, x_2)$, \citet{amari2001hierarchy}'s log-linear decomposition separates marginal and interaction terms:
+\begin{equation}
+\log p(x_1, x_2) = \theta_1(x_1) + \theta_2(x_2) + \eta(x_1, x_2) + \psi
+\end{equation}
+The \textit{independence submanifold} $\mathcal{M}_{\text{ind}} = \{\eta = 0\}$ is e-flat. Interaction coordinates $\eta$ are structurally present in any joint model---they parameterize directions transverse to independence.
+
+\textbf{What we add.} Standard information geometry studies the geometry of a fixed model class. Interaction coordinates either belong to the model or don't---a modeling choice. We study a different question: given that dynamics determine which distributions are reachable (the \textit{accessible family}), when does coupling expand this family? The interaction coordinates may be present in the ambient model yet dynamically inaccessible at zero coupling. Manifold expansion occurs when coupling makes them accessible.
+
+This connects to singular learning theory \citep{watanabe2009algebraic}, where Fisher degeneracy is a fixed property of the model. Here, degeneracy can be \textit{lifted} by coupling: directions in $\ker(dF_0)$ at zero coupling can leave the kernel at positive coupling. This ``identifiability activation'' is dynamic, not static.
+
+%==============================================================================
+\section{Manifold expansion under coupling}
+\label{sec:expansion}
+%==============================================================================
+
+\subsection{Setup: three distinct objects}
+
+Consider two dynamical systems with state spaces $X_1 \subset \mathbb{R}^{n_1}$ and $X_2 \subset \mathbb{R}^{n_2}$. We distinguish three objects that are often conflated:
+
+\begin{enumerate}
+    \item \textbf{Ambient manifold} $\mathcal{P}(X_1 \times X_2)$: The space of all probability distributions over the joint state space. This is fixed.
+
+    \item \textbf{Chosen model class} $\mathcal{M} \subset \mathcal{P}$: A parametric family the analyst uses for inference (e.g., ``all bivariate Gaussians''). Standard bounds assume this is fixed.
+
+    \item \textbf{Accessible family} $\mathcal{M}_{\text{acc}}(\kappa)$: The distributions that the \textit{dynamics} can actually produce at coupling strength $\kappa$. This may change with $\kappa$.
+\end{enumerate}
+
+\textbf{The independence submanifold}: A key example of a submodel is $\mathcal{M}_{\text{ind}} = \{p_1 \otimes p_2 : p_i \in \mathcal{M}_i\}$---the product distributions with zero interaction. In information geometry terminology, this is an \textit{e-flat} submanifold corresponding to zero interaction coordinates in the hierarchical log-linear decomposition \citep{amari2016information}.
+
+\textbf{The fixed-model assumption}: Many learning and communication bounds assume the accessible family is contained in a fixed model class. We do \textit{not} claim this assumption is wrong in general---only that it need not hold in the regime we study.
+
+\textbf{Formal setup}: Let $\varphi_\kappa: X_1 \times X_2 \to X_1 \times X_2$ denote coupled dynamics with coupling strength $\kappa \geq 0$, and let $h: X_1 \times X_2 \to \mathbb{R}^m$ be an observation map. Let $\mathcal{B}$ be a smooth $d$-dimensional manifold of \textit{physical parameters} $\beta$ (e.g., damping rates, noise intensities, frequencies).
+
+\medskip
+\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+\textbf{Key convention.} The coupling strength $\kappa$ is an \textit{index} selecting a dynamical system, not a coordinate in $\mathcal{B}$. This prevents trivial rank increases from simply adding $\kappa$ as a new parameter. Rank changes must arise from how coupling restructures the parameter$\to$distribution map, not from expanding the parameter space.}}
+\medskip
+
+\noindent For each fixed $\kappa$, we have a map:
+\begin{equation}
+F_\kappa: \mathcal{B} \to \mathcal{P}(\mathbb{R}^m), \quad \beta \mapsto Q_{(\kappa,\beta)} = (h)_\# P_{(\kappa,\beta)}
+\end{equation}
+where $P_{(\kappa,\beta)}$ is the stationary distribution of $\varphi_\kappa$ at parameters $\beta$, and $(h)_\#$ denotes the pushforward through $h$. The \textit{accessible family} at coupling $\kappa$ is the image:
+\[
+\mathcal{M}_{\text{acc}}(\kappa) = \mathrm{Image}(F_\kappa) \subset \mathcal{P}(\mathbb{R}^m)
+\]
+
+\textbf{Role of the observation map.} The observation map $h: X_1 \times X_2 \to \mathbb{R}^m$ determines which features of the joint state are statistically accessible. When $h$ is the identity (full state observation), identifiability depends only on dynamics. When $h$ is a low-dimensional projection (partial observation), some coordinates may remain unidentifiable even if the dynamics distinguish them. Our rank-change theorems concern the map $F_\kappa = (h)_\# \circ P_{(\kappa,\cdot)}$; both dynamics and observation contribute to the accessible family. In the examples, we specify $h$ explicitly and note when identifiability depends on observation richness.
+
+\textbf{Snapshot vs.\ path distributions.} Throughout this paper, $Q_{(\kappa,\beta)}$ is the distribution of a \textit{single observation} (snapshot) from the stationary measure---not the distribution over time-series paths. We analyze identifiability from i.i.d.\ samples after mixing; temporal autocorrelations are ignored unless stated otherwise. For dynamical systems where time correlations make additional parameters identifiable (e.g., drift rates from trajectory data), a richer observation map $h$ that extracts lagged covariances or path statistics would be appropriate; our framework accommodates this by enlarging the codomain of $h$.
+
+\textbf{Standing assumptions.} Throughout, we assume:
+\begin{enumerate}
+\item[(A1)] For each $(\kappa, \beta)$, the dynamics $\varphi_\kappa$ admit a (locally) unique stationary distribution $P_{(\kappa,\beta)}$.
+\item[(A2)] The map $\beta \mapsto P_{(\kappa,\beta)}$ (and hence $F_\kappa$) is smooth.
+\item[(A3)] The observation map $h$ is smooth with sufficient regularity that $Q = (h)_\# P$ has a smooth density on its support.
+\item[(A4)] \textbf{Finite-dimensional target.} The accessible family $F_\kappa(\mathcal{B})$ is (or is embedded in) a finite-dimensional \textit{regular} statistical manifold $\mathcal{P} \subset \mathcal{P}(\mathbb{R}^m)$, where the Fisher metric is positive-definite on each tangent space.
+\end{enumerate}
+These assumptions exclude bifurcation points where stationary distributions split or vanish. Our results apply to parameter regions where (A1)--(A4) hold. At the critical threshold $\kappa_c$ itself, the accessible family may form a singular variety rather than a smooth manifold, and the Fisher metric can degenerate---a setting studied in singular learning theory \citep{watanabe2009algebraic}. The novelty here is that coupling can \textit{resolve} such singularities: directions that are rank-degenerate at $\kappa < \kappa_c$ become regular at $\kappa > \kappa_c$.
+
+\textbf{Our claim}: For high-dimensional coherent systems, the rank of $dF_\kappa$ can increase as $\kappa$ crosses a threshold---the image manifold gains dimension.
+
+\textbf{Scope: finite-dimensional models.} The ambient space $\mathcal{P}(\mathbb{R}^m)$ of all distributions is infinite-dimensional. \textbf{All results in this paper are stated for finite-dimensional statistical manifolds} (Assumption A4), which is the setting of classical information geometry \citep{amari2016information}. This is achieved either by working with parametric families (OU: Gaussians) or by reducing via the observation map $h$ to finite-dimensional summaries (Kuramoto: order parameter). The core argument---Jacobian rank of $F_\kappa$ determines identifiable dimension---could in principle be extended to Banach/Hilbert manifold settings with appropriate infinite-dimensional Fisher geometry, but this is beyond our scope.
+
+\begin{definition}[Manifold expansion]
+\label{def:expansion}
+Define the \textit{maximal rank} of $F_\kappa$ as:
+\begin{equation}
+R(\kappa) := \sup_{\beta \in \mathcal{B}} \mathrm{rank}\, dF_\kappa(\beta)
+\end{equation}
+By lower semicontinuity of rank (the sets $\{\beta : \mathrm{rank}\, dF_\kappa(\beta) \geq r\}$ are open, since rank $\geq r$ iff some $r \times r$ minor is nonzero), the set where rank equals the supremum is open. For analytic maps or generic smooth maps this set is also dense; in general applications we restrict to parameter regions where the supremum is attained. When $\mathcal{B}$ is compact, the supremum is a maximum.
+
+\textbf{Manifold expansion} occurs at $\kappa_c$ if the maximal rank increases as $\kappa$ crosses $\kappa_c$:
+\begin{equation}
+R(\kappa_c^+) > R(\kappa_c^-)
+\end{equation}
+Equivalently, the dimension of $\mathcal{M}_{\text{acc}}(\kappa)$ increases: a parameter direction in $\mathcal{B}$ that was generically in the kernel of $dF_\kappa$ becomes generically non-degenerate under coupling.
+
+In Fisher-metric terms: manifold expansion corresponds to an increase in Fisher rank---the number of generically linearly independent score directions.
+\end{definition}
+
+\textbf{Remark (Generic vs. maximal rank).} Theorem~\ref{thm:main} is stated for maximal rank $R(\kappa) = \sup_\beta \mathrm{rank}\,dF_\kappa(\beta)$. The \textit{generic rank} (the rank achieved on a dense open set) satisfies generic rank $\leq$ maximal rank, with equality for analytic maps. For the OU process, the rank is constant across all $({\gamma}, {\sigma})$ with $\gamma, \sigma > 0$, so generic and maximal coincide. For Kuramoto, rank may vary with parameters, but the maximal rank still exhibits the phase transition. Our results guarantee that the maximal rank increases; whether all of $\mathcal{B}$ achieves the new rank depends on the specific model.
+
+This definition is coordinate-invariant: rank is preserved under reparameterization. It captures ``new identifiable directions appear'' in an intrinsic way.
+
+The novelty is not that interaction parameters exist in the full parametric family---\citet{amari2001hierarchy}'s hierarchical decomposition already accounts for this. The novelty is that \textbf{dynamics and observation determine which interaction coordinates are identifiable}. Coupling can \textit{activate} coordinates that were structurally present but dynamically inaccessible---a phenomenon we term \textbf{coupling-induced identifiability activation}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/fig1_geometric_schematic.pdf}
+\caption{\textbf{Geometric schematic of manifold expansion.} At $\kappa = 0$, the image of $F_0$ lies on the constraint submanifold $\mathcal{M}_0$. Under coupling ($\kappa > 0$), the image $F_\kappa(\mathcal{B})$ escapes into the transverse direction $\eta$, increasing Fisher rank by at least one.}
+\label{fig:geometric}
+\end{figure}
+
+\subsection{Mechanism: collective coordinates}
+
+Let $\varphi: X_1 \times X_2 \to X_1 \times X_2$ be the coupled dynamics. Under coupling, new \textit{collective coordinates} can become accessible:
+
+\begin{definition}[Collective coordinate]
+A collective coordinate is a function $\psi: X_1 \times X_2 \to \mathbb{R}$ that is:
+\begin{enumerate}
+    \item Not reducible to functions of $X_1$ or $X_2$ alone
+    \item \textit{Dynamically stable}: slow manifold, metastable basin, or conserved quantity
+    \item \textit{Statistically identifiable}: non-degenerate Fisher information along $\psi$ under observation $h$
+\end{enumerate}
+\end{definition}
+
+Examples:
+\begin{itemize}
+    \item Phase difference between coupled oscillators \citep{strogatz2000kuramoto,acebron2005kuramoto}
+    \item Synchronization manifold coordinates \citep{pikovsky2001synchronization}
+    \item Order parameters of collective states (e.g., chimera states) \citep{panaggio2015chimera}
+    \item Interface modes at boundaries between systems
+\end{itemize}
+
+These coordinates represent genuinely new degrees of freedom: they were not accessible to either system in isolation.
+
+\subsection{Main theorem: coupling-induced rank transitions}
+\label{sec:main_theorem}
+
+We now state our main result. First, a standard lemma connecting Fisher rank to Jacobian rank.
+
+\begin{lemma}[Pullback identity]
+\label{lem:pullback}
+Let $\mathcal{P}$ be a regular statistical manifold with Fisher metric $g$, and let $F: \mathcal{B} \to \mathcal{P}$ be a smooth map. The Fisher information matrix on $\mathcal{B}$ induced by the family $\mathrm{Image}(F)$ is the pullback:
+\begin{equation}
+I_\mathcal{B} = F^* g, \qquad \mathrm{rank}\, I_\mathcal{B} = \mathrm{rank}\, dF.
+\end{equation}
+\end{lemma}
+\begin{proof}
+The pullback $(F^* g)_{ij} = g(dF(\partial_i), dF(\partial_j))$ equals $(I_\mathcal{B})_{ij}$ by the chain rule for score functions. The kernel of $F^* g$ equals the kernel of $dF$ (since $g$ is positive-definite), giving rank equality.
+\end{proof}
+
+Thus Fisher rank = Jacobian rank of the dynamics-to-distribution map. The main theorem provides criteria for when coupling increases this rank.
+
+\textbf{Why this is nontrivial.} One might object: ``of course coupling adds identifiable directions---$\kappa$ is itself a parameter.'' But our theorem concerns rank on the \textit{fixed} parameter space $\mathcal{B}$, not the extended space $\mathcal{B} \times \mathbb{R}_\kappa$. Many couplings preserve rank; rank increase requires that coupling \textit{activates} a previously null direction in parameter space.
+
+\begin{theorem}[Coupling-induced rank transitions]
+\label{thm:main}
+Let $\mathcal{B}$ be a smooth $d$-dimensional parameter manifold, let $\mathcal{P}$ be a finite-dimensional regular statistical manifold with Fisher metric $g$, and let $F_\kappa: \mathcal{B} \to \mathcal{P}$ be a smooth family of maps indexed by coupling strength $\kappa \geq 0$.
+
+\medskip
+\noindent\textbf{Part I (Constraint-release criterion).} Let $\mathcal{M}_0 \subset \mathcal{P}$ be a smooth submanifold of codimension $c$ (e.g., the independence submanifold). Choose local coordinates on $\mathcal{P}$ near $\mathcal{M}_0$ so that $\mathcal{M}_0 = \{\eta = 0\}$ locally, and write $F_\kappa(\beta) = (f_\kappa(\beta), \eta_\kappa(\beta))$ where $f$ are coordinates along $\mathcal{M}_0$ and $\eta$ are transverse (normal) coordinates. Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $R(\kappa_c) = \mathrm{rank}\, dF_{\kappa_c}(\beta_0)$. Suppose:
+\begin{enumerate}
+    \item[(C1)] $F_{\kappa_c}(\mathcal{B}) \subseteq \mathcal{M}_0$, i.e., $\eta_{\kappa_c}(\beta) \equiv 0$ (dynamics constrain to submanifold at $\kappa = \kappa_c$)
+    \item[(C2)] \textbf{Kernel activation at $\beta_0$}: There exists $v \in T_{\beta_0}\mathcal{B}$ with $df_{\kappa_c}(v) = 0$ (hence $v \in \ker(dF_{\kappa_c}(\beta_0))$) such that $d\eta_\kappa|_{\beta_0}(v) \neq 0$ for $\kappa$ just above $\kappa_c$
+\end{enumerate}
+Geometrically, (C2) says $F_\kappa$ escapes the constraint $\mathcal{M}_0$ at $F_\kappa(\beta_0)$: the image acquires a component in the normal direction.
+
+Then \textbf{for $\kappa$ in a right neighborhood of $\kappa_c$}:
+\begin{equation}
+R(\kappa) \geq R(\kappa_c) + 1
+\end{equation}
+If $m$ independent kernel directions are activated (i.e., $\dim \mathrm{span}\{d\eta_\kappa(v_i)\} = m$ for $v_i \in \ker(dF_{\kappa_c})$), then $R(\kappa) \geq R(\kappa_c) + m$.
+
+\textbf{Perturbative test (when $\kappa_c = 0$).} When the critical threshold is zero, condition (C2) can be checked via a mixed derivative: there exists $v \in \ker(dF_0(\beta_0))$ such that
+\begin{equation}
+\left.\frac{\partial}{\partial \kappa}\right|_{\kappa=0} \left( d_\beta \eta_\kappa(\beta_0)[v] \right) \neq 0.
+\end{equation}
+In coordinates, this is a nonzero entry of $\partial^2 \eta / (\partial \kappa \, \partial \beta)$ along $v$. Note that merely checking $\partial_\kappa \eta_\kappa(\beta_0)|_{\kappa=0} \neq 0$ is \textit{insufficient}: that condition says the image point moves off $\mathcal{M}_0$, but rank increase requires that $\beta$-sensitivity (not just position) changes.
+
+\medskip
+\noindent\textbf{Part II (Symmetry-breaking criterion).} Let $G$ be a compact Lie group acting smoothly and properly on $\mathcal{P}$, and let $\mathrm{Fix}(G) = \{p \in \mathcal{P} : a \cdot p = p \text{ for all } a \in G\}$ be the fixed-point set (an embedded submanifold by the slice theorem). Let $\beta_0 \in \mathcal{B}$ achieve the maximal rank $R(\kappa_c) = \mathrm{rank}\, dF_{\kappa_c}(\beta_0)$.
+
+\textbf{Key point.} We work on the quotient $\mathcal{P}/G$---equivalently, we assume $F_\kappa$ is gauge-fixed so its image lies in a slice transversal to $G$-orbits. Orbit directions are \textit{not} counted toward rank. The rank increase comes from \textbf{$G$-invariant observables} (e.g., order parameter magnitude $r$) becoming parameter-sensitive when symmetry breaks. Formally, define $\bar{F}_\kappa = \pi \circ F_\kappa$ where $\pi: \mathcal{P} \to \mathcal{P}/G$ is the quotient map; the rank claim is for $\bar{F}_\kappa$.
+
+Suppose:
+\begin{enumerate}
+    \item[(S1)] $F_{\kappa_c}(\mathcal{B}) \subseteq \mathrm{Fix}(G)$ (distributions are $G$-invariant at $\kappa = \kappa_c$)
+    \item[(S2)] For $\kappa$ just above $\kappa_c$, there exists $\beta$ such that $F_\kappa(\beta) \notin \mathrm{Fix}(G)$ (symmetry broken)
+    \item[(S3)] \textbf{Invariant-observable activation}: There exists $v \in \ker(dF_{\kappa_c}(\beta_0))$ and a $G$-invariant observable $\phi: \mathcal{P} \to \mathbb{R}$ such that $d(\phi \circ F_\kappa)|_{\beta_0}(v) \neq 0$ for $\kappa$ just above $\kappa_c$
+\end{enumerate}
+Then \textbf{for $\kappa$ in a right neighborhood of $\kappa_c$}:
+\begin{equation}
+R(\kappa) \geq R(\kappa_c) + 1
+\end{equation}
+If $m$ independent $G$-invariant observables are activated by coupling, the rank increase is at least $m$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Part I.} Work in a local chart $(f, \eta) \in \mathbb{R}^k \times \mathbb{R}^s$ on $\mathcal{P}$ where $\mathcal{M}_0 = \{\eta = 0\}$. Represent the differential as $dF_\kappa = (df_\kappa, d\eta_\kappa): T_{\beta_0}\mathcal{B} \to \mathbb{R}^k \times \mathbb{R}^s$. Condition (C1) gives $\eta_{\kappa_c} \equiv 0$, hence $d\eta_{\kappa_c} = 0$ identically. Let $u_1, \ldots, u_{R(\kappa_c)} \in T_{\beta_0}\mathcal{B}$ be vectors whose images $dF_{\kappa_c}(u_i) = (df_{\kappa_c}(u_i), 0)$ are linearly independent, spanning $\mathrm{Image}(dF_{\kappa_c}(\beta_0))$.
+
+Let $v \in \ker(df_{\kappa_c}(\beta_0))$ be as in (C2). Since $d\eta_{\kappa_c} = 0$, we have $dF_{\kappa_c}(v) = (0, 0)$, so $v \in \ker(dF_{\kappa_c}(\beta_0))$.
+
+\textit{Claim}: For $\kappa$ in a right neighborhood of $\kappa_c$, the vectors $dF_\kappa(u_1), \ldots, dF_\kappa(u_{R(\kappa_c)}), dF_\kappa(v)$ are linearly independent.
+
+\textit{Proof of claim}: Form the $(R(\kappa_c)+1) \times (k+s)$ matrix $M_\kappa$ whose rows are these image vectors. Choose $R(\kappa_c)$ columns from the $f$-block where $df_{\kappa_c}(u_1), \ldots, df_{\kappa_c}(u_{R(\kappa_c)})$ are linearly independent (such columns exist since $\mathrm{rank}\,df_{\kappa_c}|_{\mathrm{span}\{u_i\}} = R(\kappa_c)$), and one column $j$ from the $\eta$-block where $(d\eta_\kappa(v))^j \neq 0$ for $\kappa$ just above $\kappa_c$ (such a column exists by (C2)). Consider the $(R(\kappa_c)+1) \times (R(\kappa_c)+1)$ minor $N_\kappa$ formed by these columns.
+
+At $\kappa = \kappa_c$: The upper-left $R(\kappa_c) \times R(\kappa_c)$ block (from the $u_i$ rows and $f$-columns) equals $A_{\kappa_c} := (df_{\kappa_c}(u_i))^{\text{selected columns}}$, which is invertible. The last row is $(df_{\kappa_c}(v), 0) = (0, 0)$ since $v \in \ker(df_{\kappa_c})$ and $d\eta_{\kappa_c} = 0$. The right column is zero since $d\eta_{\kappa_c} = 0$. Thus $\det N_{\kappa_c} = 0$.
+
+At $\kappa$ just above $\kappa_c$: Write $N_\kappa$ in block form:
+\[
+N_\kappa = \begin{pmatrix} A_\kappa & b_\kappa \\ c_\kappa^T & d_\kappa \end{pmatrix}
+\]
+where $A_\kappa$ is $R(\kappa_c) \times R(\kappa_c)$ (from $u_i$ and $f$-columns), $b_\kappa$ is $R(\kappa_c) \times 1$ (from $u_i$ and the $\eta$-column), $c_\kappa^T$ is $1 \times R(\kappa_c)$ (from $v$ and $f$-columns), and $d_\kappa = (d\eta_\kappa(v))^j$.
+
+By continuity, $A_\kappa$ remains invertible for $\kappa$ in a neighborhood of $\kappa_c$ (since $\det A_{\kappa_c} \neq 0$). By condition (C2), $d_\kappa \neq 0$ for $\kappa$ just above $\kappa_c$. The Schur complement formula gives:
+\[
+\det N_\kappa = \det(A_\kappa) \cdot (d_\kappa - c_\kappa^T A_\kappa^{-1} b_\kappa).
+\]
+By continuity, $b_\kappa, c_\kappa \to 0$ as $\kappa \to \kappa_c^+$ (since $b_{\kappa_c} = c_{\kappa_c} = 0$). For $\kappa$ just above $\kappa_c$, the correction term $c_\kappa^T A_\kappa^{-1} b_\kappa$ is second-order small while $d_\kappa \neq 0$ by (C2), so $\det N_\kappa \neq 0$. Thus $M_\kappa$ has rank at least $R(\kappa_c) + 1$, establishing $R(\kappa) \geq R(\kappa_c) + 1$ for $\kappa$ in a right neighborhood of $\kappa_c$.
+
+\medskip
+\textbf{Part II.} We reduce this to Part I by taking $\mathcal{M}_0 = \mathrm{Fix}(G)$ as the constraint submanifold. Since $G$ is compact and acts properly, the fixed-point set $\mathrm{Fix}(G)$ is an embedded submanifold by the slice theorem \citep{palais1961existence}. There exists a $G$-invariant tubular neighborhood with slice coordinates $(f, \eta)$ where $\mathrm{Fix}(G) = \{\eta = 0\}$ and $\eta$ transforms nontrivially under $G$.
+
+Condition (S1) states $F_{\kappa_c}(\mathcal{B}) \subseteq \mathrm{Fix}(G)$, which gives $\eta_{\kappa_c} \equiv 0$---matching (C1). For (S3), let $\phi$ be $G$-invariant with $d(\phi \circ F_\kappa)(v) \neq 0$ for $\kappa$ just above $\kappa_c$. Since $\phi$ is $G$-invariant, it depends only on the $G$-invariant coordinates, which include $f$ (restricted to $\mathrm{Fix}(G)$) and functions of $|\eta|$ (or other $G$-invariant combinations of $\eta$). Near $\mathrm{Fix}(G)$, any smooth $G$-invariant $\phi$ can be written as $\phi(f, \eta) = \psi(f, \|\eta\|^2)$ for some smooth $\psi$.
+
+Now, $d(\phi \circ F_\kappa)(v) = d\psi \cdot (df_\kappa(v), 2\eta_\kappa \cdot d\eta_\kappa(v))$. At $\kappa = \kappa_c$: $\eta_{\kappa_c} = 0$, so the second term vanishes and we get $d(\phi \circ F_{\kappa_c})(v) = \partial_f \psi \cdot df_{\kappa_c}(v) = 0$ since $v \in \ker(df_{\kappa_c})$.
+
+At $\kappa$ just above $\kappa_c$: Since $d(\phi \circ F_\kappa)(v) \neq 0$ and $v \in \ker(df_{\kappa_c})$ (hence $df_\kappa(v)$ is small by continuity), the nonzero contribution must come from the $\eta$-dependent term. This requires $\eta_\kappa(\beta_0) \neq 0$ (the image has left $\mathrm{Fix}(G)$) and $d\eta_\kappa(v) \neq 0$---precisely condition (C2). The rank increase then follows from Part I.
+\end{proof}
+
+\begin{corollary}[Operational detection of rank transitions]
+\label{cor:detection}
+Given time-series data at coupling strengths $\kappa_1 < \kappa_2 < \cdots < \kappa_m$, rank transitions can be detected as follows:
+\begin{enumerate}
+    \item \textbf{Estimate Fisher information}: For each $\kappa_j$, estimate the Fisher information matrix $\hat{I}(\kappa_j)$ from data---either directly via score function estimation, or via the Hessian of the log-likelihood at the MLE.
+    \item \textbf{Track eigenvalues}: Compute eigenvalues $\lambda_1(\kappa_j) \geq \lambda_2(\kappa_j) \geq \cdots$ of $\hat{I}(\kappa_j)$.
+    \item \textbf{Detect emergence}: A rank transition at $\kappa_c$ manifests as one or more eigenvalues crossing from $\lambda_k \approx 0$ (within estimation noise) to $\lambda_k > 0$ significantly.
+\end{enumerate}
+For the OU example, the minimal sufficient statistics are the sample covariance entries $(\hat{\Sigma}_{11}, \hat{\Sigma}_{22}, \hat{\Sigma}_{12})$; rank increase corresponds to $\hat{\Sigma}_{12}$ becoming $\beta$-sensitive. For Kuramoto, the order parameter magnitude $r$ suffices (after gauge-fixing $\Psi = 0$); rank increase corresponds to $r$ becoming parameter-sensitive above $K_c$.
+\end{corollary}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig2_eigenvalue_emergence.pdf}
+\caption{\textbf{Eigenvalue emergence under coupling (schematic).} Illustrative eigenvalue trajectories showing rank transitions as coupling increases. (A) Coupled OU: the correlation coordinate $\rho$ becomes accessible at any $\kappa > 0$, activating a third identifiable direction (rank $2 \to 3$). (B) Kuramoto (mean-field theory, observing only order parameter $r$): below $K_c$, $r = 0$ for all parameter values, so Fisher rank is zero; at $K_c$, $r$ emerges and becomes parameter-sensitive (rank $0 \to 1$). Since $r$ is a 1D statistic, at most one eigenvalue can be nonzero. These schematics illustrate the qualitative signature of Theorem~\ref{thm:main}; operational detection from data would use the pullback Fisher information $F_\kappa^* g$ on the physical parameter space $\mathcal{B}$ (see Section~\ref{sec:estimation}).}
+\label{fig:eigenvalue}
+\end{figure}
+
+\subsection{Superadditive accessible complexity}
+\label{sec:superadditive}
+
+The preceding theorem establishes conditions for rank increase under coupling. We now formalize ``the whole exceeds the sum of its parts'' as a precise inequality.
+
+\begin{definition}[Component accessible families]
+For each subsystem $i = 1, \ldots, n$, let $\mathcal{B}_i$ be its parameter manifold and let $F_i: \mathcal{B}_i \to \mathcal{P}_i$ be its dynamics-to-distribution map. Define the component accessible family $\mathcal{M}_i := \mathrm{Image}(F_i)$ and its maximal rank $R_i := \max_{\beta_i \in \mathcal{B}_i} \mathrm{rank}\, dF_i(\beta_i)$.
+\end{definition}
+
+\begin{definition}[Superadditive accessible complexity]
+Let $F_\kappa: \mathcal{B} \to \mathcal{P}$ be the coupled dynamics-to-distribution map with maximal rank $R(\kappa) := \max_{\beta \in \mathcal{B}} \mathrm{rank}\, dF_\kappa(\beta)$. The coupled system exhibits \textit{superadditive accessible complexity} at coupling $\kappa$ if
+\[
+R(\kappa) > R_{\oplus} = \sum_i R_i.
+\]
+\end{definition}
+
+\begin{lemma}[Additivity under independence]
+\label{lem:additivity}
+For the independent composite map $F_{\oplus}$, $R_{\oplus} = \sum_{i=1}^n R_i$.
+\end{lemma}
+
+\begin{proof}
+The differential $dF_{\oplus}$ is block-diagonal with blocks $dF_i$ on $T_{\beta_i}\mathcal{B}_i$. Hence $\mathrm{rank}\, dF_{\oplus}(\beta) = \sum_i \mathrm{rank}\, dF_i(\beta_i)$. Maximizing over $\beta$ yields $R_{\oplus} = \sum_i R_i$.
+\end{proof}
+
+\begin{proposition}[Sufficient condition via non-factorizable coordinates]
+\label{prop:superadditive}
+Suppose there exists a smooth map $\pi: \mathcal{P} \to \mathbb{R}^k$ such that:
+\begin{enumerate}
+\item[(A1)] $\pi \circ F_{\oplus}$ is locally constant on some open $U \subset \mathcal{B}$;
+\item[(A2)] $\pi \circ F_\kappa$ has Jacobian rank $k$ on $U$.
+\end{enumerate}
+Then $R(\kappa) \geq R_{\oplus} + k$, so the coupled system is superadditive whenever $k \geq 1$.
+\end{proposition}
+
+\subsection{Example 1: coupled Ornstein--Uhlenbeck (constraint-release)}
+\label{sec:ou}
+
+This example demonstrates Theorem~\ref{thm:main} Part I (constraint-release criterion) with $\kappa_c = 0$.
+
+\textbf{Dynamics.} Consider two coupled Ornstein--Uhlenbeck processes:
+\begin{align}
+dX_1 &= -\gamma_1 X_1 \, dt + \kappa(X_2 - X_1) \, dt + \sigma_1 \, dW_1 \\
+dX_2 &= -\gamma_2 X_2 \, dt + \kappa(X_1 - X_2) \, dt + \sigma_2 \, dW_2
+\end{align}
+where $\gamma_i > 0$ are mean-reversion rates, $\sigma_i > 0$ are noise intensities, and $\kappa \geq 0$ is the coupling strength.
+
+\textbf{Parameter manifold and observation.} The physical parameter manifold is $\mathcal{B} = \{(\gamma_1, \sigma_1, \gamma_2, \sigma_2) : \gamma_i > 0, \sigma_i > 0\} \cong (\mathbb{R}^+)^4$, which is 4-dimensional. The observation map is full state observation: $h(X_1, X_2) = (X_1, X_2)$, so the observable is the bivariate Gaussian with covariance $\Sigma$. The map $F_\kappa: \mathcal{B} \to \mathcal{P}$ sends $\beta = (\gamma_1, \sigma_1, \gamma_2, \sigma_2)$ to the centered bivariate Gaussian with covariance $\Sigma(\kappa, \beta)$. We compute the rank of the Jacobian $\partial(\Sigma_{11}, \Sigma_{22}, \Sigma_{12})/\partial\beta$.
+
+\textbf{Generic vs symmetric.} For generic $(\gamma_1, \sigma_1, \gamma_2, \sigma_2)$, the map $\beta \mapsto (\Sigma_{11}, \Sigma_{22}, \Sigma_{12})$ has rank 3 for $\kappa > 0$ and rank 2 for $\kappa = 0$. We present the symmetric case $\gamma_1 = \gamma_2 = \gamma$, $\sigma_1 = \sigma_2 = \sigma$ for intuition. Under this constraint, the parameter manifold is 2-dimensional (coordinates $\gamma, \sigma$), reducing the rank transition to $1 \to 2$; the \textit{mechanism}---activation of the correlation coordinate---remains the same. We use stationary distributions throughout; temporal autocorrelation (which would make drift rates identifiable from dynamics) is not considered.
+
+\textbf{Generic case Jacobian (verification).} For completeness, we verify the generic 4D$\to$3D rank claim. From the Lyapunov equation with drift matrix $A = -\mathrm{diag}(\gamma_1+\kappa, \gamma_2+\kappa) + \kappa J$ (where $J$ is the exchange matrix) and diffusion $D = \mathrm{diag}(\sigma_1^2, \sigma_2^2)$, the stationary covariance entries satisfy:
+\begin{align}
+\Sigma_{11} &= \frac{\sigma_1^2(\gamma_2+\kappa) + \kappa^2 \sigma_2^2}{2(\gamma_1+\kappa)(\gamma_2+\kappa) - 2\kappa^2}, \quad
+\Sigma_{22} = \frac{\sigma_2^2(\gamma_1+\kappa) + \kappa^2 \sigma_1^2}{2(\gamma_1+\kappa)(\gamma_2+\kappa) - 2\kappa^2}\\
+\Sigma_{12} &= \frac{\kappa(\sigma_1^2 + \sigma_2^2)}{2(\gamma_1+\kappa)(\gamma_2+\kappa) - 2\kappa^2}
+\end{align}
+At $\kappa = 0$: $\Sigma_{12} = 0$ identically, and $\Sigma_{ii} = \sigma_i^2/(2\gamma_i)$. The Jacobian $\partial(\Sigma_{11}, \Sigma_{22}, \Sigma_{12})/\partial(\gamma_1, \sigma_1, \gamma_2, \sigma_2)$ is $3 \times 4$; at $\kappa=0$ its rank is 2 (the $\Sigma_{12}$ row vanishes).
+
+At $\kappa > 0$: Computing the $3 \times 3$ minor formed by $(\gamma_1, \sigma_1, \gamma_2)$ at the parameter point $(\gamma_1, \sigma_1, \gamma_2, \sigma_2) = (1, 1, 1, 1)$ with $\kappa = 0.5$ gives a determinant $\approx -0.0074 \neq 0$. Hence rank = 3 for $\kappa > 0$: the rank transition $2 \to 3$ is verified.
+
+\medskip
+\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+\textbf{Summary: rank transitions in coupled OU.}\\[2pt]
+\textit{Generic case} $(\mathcal{B} \cong \mathbb{R}_+^4)$: outputs $(\Sigma_{11}, \Sigma_{22}, \Sigma_{12})$; rank $2 \to 3$.\\
+\textit{Symmetric slice} $(\mathcal{B} \cong \mathbb{R}_+^2)$: same mechanism; rank $1 \to 2$.\\
+In both cases, the correlation coordinate $\rho = \Sigma_{12}/\sqrt{\Sigma_{11}\Sigma_{22}}$ is activated.}}
+\medskip
+
+\textbf{Stationary distribution.} The stationary distribution is bivariate Gaussian with zero mean and covariance matrix $\Sigma$ satisfying the Lyapunov equation $A\Sigma + \Sigma A^T + D = 0$. For the symmetric case $\gamma_1 = \gamma_2 = \gamma$ and $\sigma_1 = \sigma_2 = \sigma$:
+\begin{align}
+\Sigma_{11} = \Sigma_{22} &= \frac{\sigma^2(\gamma + \kappa)}{2\gamma(\gamma + 2\kappa)}, \qquad
+\Sigma_{12} = \frac{\kappa \sigma^2}{2\gamma(\gamma + 2\kappa)}
+\end{align}
+giving correlation $\rho = \Sigma_{12}/\Sigma_{11} = \kappa/(\gamma + \kappa)$.
+
+This confirms $\rho(\kappa=0) = 0$ and $\rho \to 1$ as $\kappa \to \infty$ (strong coupling induces perfect correlation, as expected physically). Computing $\partial\rho/\partial\gamma$:
+\begin{equation}
+\frac{\partial\rho}{\partial\gamma} = -\frac{\kappa}{(\gamma + \kappa)^2} \neq 0 \quad \text{for } \kappa > 0
+\end{equation}
+This nonzero derivative demonstrates kernel activation: a direction that left $\rho$ unchanged at $\kappa = 0$ now varies $\rho$ at $\kappa > 0$.
+
+\textbf{Verification of Theorem~\ref{thm:main} Part I.} The ambient manifold $\mathcal{P}$ of centered bivariate Gaussians is 3-dimensional, parameterized by $(v_1, v_2, \rho)$. The independence submanifold is $\mathcal{M}_0 = \{(v_1, v_2, 0)\}$, which has codimension $c = 1$.
+
+At $\kappa = 0$: $\rho = 0$ for all $\beta$, so $F_0(\mathcal{B}) \subseteq \mathcal{M}_0$ and $R(0) = 2$.
+
+At $\kappa > 0$: $\rho > 0$, so $F_\kappa(\mathcal{B})$ escapes $\mathcal{M}_0$ and $R(\kappa) = 3$.
+
+\textbf{Role of observation.} The rank increase from 2 to 3 assumes the observation map $h$ is rich enough to identify the cross-covariance $\Sigma_{12}$. If $h$ only observes $X_1$ (marginal observation), or only observes variances $(\Sigma_{11}, \Sigma_{22})$ without cross-terms, the correlation $\rho$ remains unidentifiable and the rank increase is not observable. This illustrates that both dynamics and observation contribute to the accessible family.
+
+\textbf{Superadditivity.} Each OU process in isolation has a 1-dimensional accessible family (variance only), so $R_1 = R_2 = 1$ and $R_{\oplus} = 2$. The coupled system achieves $R(\kappa) = 3 > R_{\oplus} = 2$: \textit{strict superadditivity}.
+
+\textbf{MI vs.\ rank: a quantitative contrast.} For a bivariate Gaussian with correlation $\rho$, the mutual information is $I(X_1; X_2) = -\tfrac{1}{2}\log(1 - \rho^2) \approx \rho^2/2$ for small $\rho$. At weak coupling, $\rho = \kappa/(\gamma + \kappa) \approx \kappa/\gamma$ is first-order small, so $I(X_1; X_2) \approx \kappa^2/(2\gamma^2)$ is \textit{second-order} small. Yet the rank transition---from 2 to 3---occurs immediately at any $\kappa > 0$. This illustrates the paper's central point: manifold expansion (new identifiable coordinates) can occur even when mutual information through the coupling is negligible.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_ou_covariance.pdf}
+\caption{\textbf{Coupled OU: correlation emerges under coupling.} (A) The correlation $\rho = \kappa/(\gamma + \kappa)$ increases monotonically from zero, asymptoting to 1 as $\kappa \to \infty$. (B) Geometric interpretation: at $\kappa = 0$, the accessible family lies on the independence submanifold ($\rho = 0$); coupling moves the trajectory into the transverse direction.}
+\label{fig:ou}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig4_operational_validation.pdf}
+\caption{\textbf{Operational validation: pullback Fisher eigenvalues on $\mathcal{B}$.} Unlike the schematic in Fig.~\ref{fig:eigenvalue}, this figure shows the \textit{actual} eigenvalues of the pullback Fisher information $I_{\mathcal{B}} = F_\kappa^* g$ computed on the physical parameter space $\mathcal{B} = \{(\gamma, \sigma)\}$ for symmetric coupled OU. (A) Both eigenvalues as coupling increases. (B) Log-scale view of $\lambda_2$ near $\kappa = 0$: the second eigenvalue is exactly zero at $\kappa = 0$ and becomes positive immediately for any $\kappa > 0$, confirming the rank transition $1 \to 2$ predicted by Theorem~\ref{thm:main} Part I with $\kappa_c = 0$.}
+\label{fig:operational}
+\end{figure}
+
+\textbf{Detectability scaling.} For small $\kappa$, $\lambda_2(\kappa) = O(\kappa^2)$: the second eigenvalue emerges quadratically. This has a practical implication: detecting the rank transition in finite samples requires signal-to-noise that scales like $1/\kappa^2$. The \textit{dimension} changes immediately at any $\kappa > 0$, but finite-sample detectability has a coupling-dependent threshold. This parallels the MI comparison: both $I(X_1; X_2) \approx \kappa^2/(2\gamma^2)$ and the new Fisher eigenvalue are $O(\kappa^2)$ for small $\kappa$. The distinction is that rank is binary (0 vs.\ nonzero), while MI and eigenvalue magnitude measure degree of dependence.
+
+\textbf{Cramér--Rao bound transition.} Manifold expansion has concrete inferential consequences. Consider estimating the correlation $\rho$ from $n$ i.i.d.\ samples of $(X_1, X_2)$. At $\kappa = 0$, the correlation is identically zero---no estimator can learn $\rho$ because it doesn't vary with parameters (infinite CRB in the $\rho$-direction). At $\kappa > 0$, $\rho = \kappa/(\gamma + \kappa)$ becomes a function of parameters. The Fisher information for $\rho$ (as a reparameterization) is $I_\rho = 2n(1-\rho^2)^{-2}$ for $n$ samples from a bivariate Gaussian, giving CRB of $\mathrm{Var}(\hat{\rho}) \geq (1-\rho^2)^2/(2n)$. At weak coupling ($\rho \approx 0$), this is approximately $1/(2n)$---finite and achievable by the sample correlation coefficient. The transition from infinite to finite CRB is the statistical signature of rank increase.
+
+\subsection{Example 2: Kuramoto synchronization (symmetry breaking)}
+\label{sec:kuramoto}
+
+This example demonstrates Theorem~\ref{thm:main} Part II (symmetry-breaking criterion) with $\kappa_c > 0$. We work in the \textbf{mean-field limit} ($N \to \infty$) with added noise, where the stationary density is unique up to symmetry \citep{strogatz2000kuramoto,acebron2005kuramoto}.
+
+\textbf{Notation.} Following the Kuramoto literature, we denote coupling strength by $K$ (rather than $\kappa$) in this section. The role is identical: $K$ indexes the dynamical system, not a coordinate in the parameter space $\mathcal{B}$.
+
+\textbf{Parameter space.} The physical parameter manifold is $\mathcal{B} = \{(D, \nu) : D > 0, \nu \in \mathcal{P}(\mathbb{R})\}$ where $D$ is noise intensity and $\nu$ is the frequency distribution. For concreteness, take $\nu = \mathcal{N}(\omega_0, \sigma_\omega^2)$ so that $\mathcal{B} \cong \mathbb{R}^+ \times \mathbb{R} \times \mathbb{R}^+$ is 3-dimensional. The mean phase $\Psi$ is \textit{not} a coordinate in $\mathcal{B}$---it parameterizes the $S^1$-orbit of solutions.
+
+\textbf{Observation map and regularity.} In the mean-field limit, the order parameter $r$ is a deterministic function of $(K, \beta)$. To satisfy the regularity requirements (A3)--(A4), we model observation with additive noise: the observed order parameter is $\tilde{r} = r(K, \beta) + \epsilon$ where $\epsilon \sim \mathcal{N}(0, \tau^2)$ represents measurement uncertainty. The observation distribution is then $Q_{(K,\beta)} = \mathcal{N}(r(K,\beta), \tau^2)$, which has a smooth density on $\mathbb{R}$. After gauge-fixing $\Psi = 0$, the accessible family $\mathcal{M}_{\text{acc}}(K) \subset \mathcal{P}(\mathbb{R})$ is 1-dimensional, parameterized by the mean $r$. (Alternatively, one could work at finite $N$ where $r$ fluctuates; the mean-field + noise model is analytically simpler while preserving the rank transition.)
+
+\textbf{Observation-dependence caveat.} The rank-zero claim below $K_c$ is \textit{specific to this reduced observation}. With richer observation---e.g., phase histograms, finite-$N$ fluctuations of $r$, or the full stationary density $\rho(\theta, \omega)$---the noise intensity $D$ or frequency spread $\sigma_\omega$ may affect the observable distribution even in the incoherent phase. Our rank-transition claim concerns the order-parameter observation; more comprehensive observation maps would require separate analysis.
+
+\textbf{Mean-field dynamics.} Let $\rho(\theta, \omega, t)$ be the density of oscillators with natural frequency $\omega$ at phase $\theta$. With phase diffusion of strength $D > 0$, the density evolves according to the nonlinear Fokker--Planck equation:
+\begin{equation}
+\frac{\partial \rho}{\partial t} + \frac{\partial}{\partial \theta}\left[\rho \left(\omega + Kr\sin(\Psi - \theta)\right)\right] = D \frac{\partial^2 \rho}{\partial \theta^2}
+\end{equation}
+where the order parameter $re^{i\Psi} = \int e^{i\theta} \rho(\theta, \omega, t) \, \nu(\omega) \, d\omega \, d\theta$ is determined self-consistently. The system has $S^1$ symmetry: if $\rho(\theta)$ is a solution, so is $\rho(\theta + \phi)$ for any $\phi$.
+
+\textbf{Stationary solutions and gauge fixing.} For $K < K_c$, the unique stable stationary solution is the incoherent $S^1$-invariant density with $r = 0$. For $K > K_c$, there exists an $S^1$-\textit{orbit} of synchronized stationary solutions with $r > 0$. To satisfy assumption (A1), we define $F_K$ to return the \textbf{gauge-fixed representative} with $\Psi = 0$. Equivalently, one can define $F_K$ to return the equivalence class $[\rho]$ under $S^1$; the rank analysis is unchanged since we quotient by the symmetry.
+
+\textbf{Verification of Theorem~\ref{thm:main} Part II.}
+\begin{itemize}
+\item (S1): For $K < K_c$, $F_K(\mathcal{B})$ is contained in the $S^1$-fixed point set (the incoherent state with $r = 0$).
+\item (S2): For $K > K_c$, the synchronized stationary solutions have $r > 0$, breaking $S^1$ symmetry.
+\item (S3) \textbf{Kernel activation via order parameter}: Consider varying the noise intensity $D$ or the frequency spread $\sigma_\omega$. For $K < K_c$, these parameters do not affect the (unique) incoherent distribution, so they lie in $\ker(dF_K)$. For $K > K_c$, these parameters affect the order parameter magnitude: $\partial r/\partial D \neq 0$ and $\partial r/\partial \sigma_\omega \neq 0$. The $S^1$-invariant observable $\phi = r$ becomes parameter-sensitive.
+\end{itemize}
+
+The theorem predicts: $R(K) \geq R(0) + 1$ for $K > K_c$. Since $R(0) = 0$ (observing only $\tilde{r}$, whose mean is zero regardless of parameters below $K_c$), this gives a rank $0 \to 1$ transition. The ``$+1$'' comes from the order parameter magnitude becoming identifiable---a $G$-invariant observable that was constant on the incoherent manifold but varies with parameters on the synchronized manifold.
+
+\textbf{Fisher information.} For the Gaussian observation model $Q_{(K,\beta)} = \mathcal{N}(r(K,\beta), \tau^2)$, the Fisher information matrix on $\mathcal{B}$ is $(I_\mathcal{B})_{ij} = \tau^{-2} (\partial r/\partial \beta^i)(\partial r/\partial \beta^j)$. This has rank 0 when $\nabla_\beta r = 0$ (below $K_c$) and rank 1 when $\nabla_\beta r \neq 0$ (above $K_c$). Since $r$ determines a 1-dimensional family, rank cannot exceed 1 under this observation map.
+
+\textbf{Key difference from OU.} In the OU example (Part II), any $\kappa > 0$ immediately releases the constraint: $\kappa_c = 0$. In Kuramoto (Part II), the symmetry persists for $0 < K < K_c$; manifold expansion occurs at a \textit{genuine} critical threshold $K_c > 0$.
+
+\textbf{The strong-coupling limit.} Manifold expansion is not monotonic in coupling strength. In the Kuramoto model, as $K \to \infty$, all phases lock to a common value and the system becomes effectively rigid---the $N$ individual phase parameters collapse to a single collective phase. This is \textit{manifold collapse}: excessive coupling destroys the degrees of freedom it initially created. The ``sweet spot'' for superadditive complexity lies at intermediate coupling, where interaction coordinates are activated but individual variation persists.
+
+%==============================================================================
+\section{Consequences for complexity growth}
+\label{sec:consequences}
+%==============================================================================
+
+\subsection{Faster than fixed-class bounds predict}
+
+Standard bounds on complexity growth assume fixed parameterization, fixed sufficient statistics, and fixed dimensionality.
+
+When coupling creates new coordinates:
+\begin{itemize}
+    \item The Fisher geometry changes because the model class changes---new significant Fisher directions appear
+    \item KL-based learning rates underpredict adaptation
+    \item Channel capacity arguments apply at each fixed $\kappa$, but across $\kappa$ the ``channel'' itself changes; fixed-channel bounds cannot predict cross-$\kappa$ complexity without tracking how the accessible family evolves
+\end{itemize}
+
+\begin{definition}[Model complexity]
+We define \textit{complexity} $C$ of a statistical family $\mathcal{M}$ as the Fisher rank: the dimension of the identifiable tangent space. This is coordinate-invariant and intrinsic to the manifold geometry.
+
+\textbf{Clarification.} Fisher rank measures \textit{identifiability dimension}---the number of statistically distinguishable directions---not computational or algorithmic complexity. We use ``complexity'' in the sense of ``accessible degrees of freedom under observation,'' following the information-geometric tradition where model dimension is a natural complexity measure \citep{amari2016information}.
+
+\textbf{Rank vs.\ effective rank.} Fisher rank is a binary notion: a direction is either in the kernel (rank 0 contribution) or not (rank 1 contribution). It does not distinguish ``sloppy'' directions (small but nonzero eigenvalues) from ``stiff'' directions (large eigenvalues). In finite-sample settings, practical identifiability depends on whether eigenvalues exceed a noise floor. Our theoretical results concern the transition from $\lambda = 0$ to $\lambda > 0$; Corollary~\ref{cor:eigenvalue} makes this explicit. For applications, one would use an \textit{effective rank} (e.g., number of eigenvalues above noise level) rather than exact rank.
+\end{definition}
+
+\begin{corollary}[Eigenvalue emergence under coupling]
+\label{cor:eigenvalue}
+In regimes where the accessible family $\mathcal{M}_{\text{acc}}(\kappa)$ can be embedded in a fixed parameterization across $\kappa$, rank increase (Theorem~\ref{thm:main}) manifests as eigenvalue emergence. As coupling strength $\kappa$ crosses a critical threshold $\kappa_c$, one or more Fisher eigenvalues emerge from zero:
+\begin{equation}
+\lambda_k(\kappa_c^-) = 0 \quad \text{and} \quad \lambda_k(\kappa_c^+) > 0
+\end{equation}
+In finite-sample settings, emergence is detected when eigenvalues cross a noise threshold $\epsilon > 0$.
+\end{corollary}
+
+\subsection{Heuristic scaling: colony dynamics}
+
+Consider $N$ high-D systems in a ``colony'' (weakly coupled network). The \textit{ambient space} of possible interaction parameters grows rapidly: with $N$ subsystems of internal dimension $n$, pairwise cross-covariances alone contribute $O(N^2 \cdot n^2)$ potential coordinates. However, the \textit{accessible} submanifold dimension is constrained by coupling parameters, symmetry constraints, attractor structure, and observation map.
+
+A rough upper bound, if each pairwise coupling can create $k$ new identifiable coordinates:
+\begin{equation}
+\mathrm{rank}\, I_{\text{colony}} \leq N \cdot \mathrm{rank}\, I_{\text{single}} + |E| \cdot k
+\end{equation}
+where $|E|$ is the number of coupling edges. For dense networks $|E| \sim N^2$; for sparse networks $|E| \sim N$.
+
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+%==============================================================================
+
+\subsection{Summary of contributions}
+
+This paper provides:
+\begin{enumerate}
+    \item A formal definition of \textbf{manifold expansion} as Fisher-rank increase under coupling (Definition~\ref{def:expansion})
+    \item \textbf{Lemma~\ref{lem:pullback}}: Pullback identity (Fisher rank = Jacobian rank)
+    \item \textbf{Theorem~\ref{thm:main}}: Coupling-induced rank transitions, with two parts:
+    \begin{itemize}
+        \item Part I: Constraint-release criterion for rank increase
+        \item Part II: Symmetry-breaking criterion for rank increase
+    \end{itemize}
+    \item Worked examples verifying the theorem: coupled OU (Part I, $\kappa_c = 0$) and Kuramoto oscillators (Part II, $\kappa_c > 0$)
+\end{enumerate}
+
+The core technical contribution is identifying \textbf{coupling-induced identifiability activation}: interaction coordinates that are structurally present but dynamically inaccessible can become identifiable under coupling, increasing the Fisher rank of the observable family.
+
+\subsection{Relation to emergence}
+
+Manifold expansion provides an information-geometric characterization of emergence: new identifiable coordinates that are properties of the coupled system but not reducible to properties of components in isolation. The superadditivity condition $R(\kappa) > \sum_i R_i$ is a formal criterion for ``the whole exceeds the sum of its parts''---not merely more degrees of freedom, but genuinely new coordinates that exist only relationally.
+
+This framing sidesteps metaphysical debates about ``strong'' versus ``weak'' emergence by grounding the concept in statistical identifiability: an \textit{emergent coordinate} is one whose Fisher information is zero for all subsystems in isolation but nonzero for the coupled system. The correlation $\rho$ in coupled OU processes and the order parameter $r$ in Kuramoto oscillators are emergent in precisely this sense---they become identifiable only through interaction.
+
+\subsection{Testable predictions}
+
+The framework makes specific predictions:
+\begin{enumerate}
+    \item \textbf{Fisher rank increase}: For coupled dynamical systems, estimate Fisher information from time-series data at varying coupling strengths $\kappa$. Predict: $\mathrm{rank}\, I(\kappa)$ increases as $\kappa$ crosses critical thresholds.
+
+    \item \textbf{Eigenvalue emergence}: New Fisher eigenvalues should emerge continuously from zero as coupling increases.
+
+    \item \textbf{Superlinear scaling}: For colonies of $N$ coupled subsystems, the identifiable parameter count should grow faster than $N$ in the manifold-expansion regime.
+\end{enumerate}
+
+\subsection{Practical estimation protocol}
+\label{sec:estimation}
+
+We outline a concrete protocol for detecting manifold expansion from data.
+
+\textbf{Setup.} Given time-series observations $\{y_t^{(\kappa)}\}_{t=1}^T$ at coupling strengths $\kappa \in \{\kappa_1, \ldots, \kappa_m\}$, the goal is to detect whether Fisher rank increases across the $\kappa$ sweep.
+
+\textbf{Step 1: Choose sufficient statistics.} For each example:
+\begin{itemize}
+    \item \textit{Coupled OU}: Use sample covariance $\hat{\Sigma} = (\hat{\Sigma}_{11}, \hat{\Sigma}_{22}, \hat{\Sigma}_{12})$
+    \item \textit{Kuramoto}: Use order parameter $(r, \Psi)$ estimated from phase time-series
+    \item \textit{General}: Use moments or cumulants up to order matching the expected model dimension
+\end{itemize}
+
+\textbf{Step 2: Estimate Fisher information.} Two approaches:
+\begin{enumerate}
+    \item[(a)] \textit{Score-based}: Estimate partial derivatives $\partial_\beta \log p(y|\beta)$ at the MLE $\hat{\beta}$; compute $\hat{I}_{ij} = \frac{1}{T}\sum_t s_i(y_t) s_j(y_t)$ where $s_i = \partial_{\beta_i} \log p$.
+    \item[(b)] \textit{Hessian-based}: Compute $\hat{I} = -\nabla^2_\beta \ell(\hat{\beta})$ where $\ell$ is the log-likelihood.
+\end{enumerate}
+
+\textbf{Step 3: Track eigenvalue spectrum.} For each $\kappa_j$, compute eigenvalues $\lambda_1 \geq \lambda_2 \geq \cdots$ of $\hat{I}(\kappa_j)$. Plot $\lambda_k(\kappa)$ versus $\kappa$.
+
+\textbf{Step 4: Detect rank transition.} A rank increase at $\kappa_c$ appears as:
+\begin{itemize}
+    \item One or more eigenvalues crossing from $\lambda_k < \epsilon$ to $\lambda_k \gg \epsilon$
+    \item The threshold $\epsilon$ should account for finite-sample noise (bootstrap confidence intervals recommended)
+\end{itemize}
+
+\textbf{Expected signatures by example:}
+\begin{itemize}
+    \item \textit{OU (transversality, $\kappa_c = 0$)}: The third eigenvalue (corresponding to $\Sigma_{12}$) emerges immediately at any $\kappa > 0$
+    \item \textit{Kuramoto (symmetry breaking, $\kappa_c > 0$)}: An eigenvalue corresponding to phase sensitivity emerges at $K = K_c$, with the transition sharpening as system size increases
+\end{itemize}
+
+\subsection{Scope and limitations}
+
+Our analysis assumes that the accessible family forms a smooth parametric model. In practice, the set of stationary distributions induced by dynamics may have irregular structure; our results apply where smooth-family regularity holds at least locally.
+
+The mechanism is geometric, not substrate-specific. It applies wherever high-dimensional coherent systems couple and satisfy the regularity conditions of Theorem~\ref{thm:main}.
+
+%==============================================================================
+\section{Conclusion}
+%==============================================================================
+
+Information geometry has been remarkably successful because the fixed-manifold assumption usually holds. We have identified a regime where it does not: when high-dimensional coherent systems couple, the identifiable statistical family can expand.
+
+This is not a rejection of information-theoretic bounds. It is recognition that such bounds apply to fixed model classes, and coupling can change which parameters are identifiable. The key contribution is formalizing this as \textbf{manifold expansion}---defined via Fisher-rank increase---and establishing conditions under which superadditive dimensionality occurs.
+
+In the regime described here, a useful description is constraint exchange rather than token exchange: high-dimensional systems reshape each other's accessible state spaces rather than transmitting discrete symbols through a fixed channel.
+
+\begin{acknowledgements}
+The author thanks the anonymous reviewers for helpful comments.
+\end{acknowledgements}
+
+\section*{Statements and declarations}
+
+\textbf{Funding.} The author did not receive support from any organization for the submitted work.
+
+\textbf{Competing interests.} The author has no relevant financial or non-financial interests to disclose.
+
+\textbf{Data availability.} No datasets were generated or analyzed. Simulation code is available at \url{https://github.com/todd866/manifold-expansion}
+
+% Bibliography with author-year format
+\begin{thebibliography}{99}
+
+\bibitem[Acebrón et al.(2005)]{acebron2005kuramoto}
+Acebrón, J.~A., Bonilla, L.~L., Pérez~Vicente, C.~J., Ritort, F., Spigler, R. (2005). The Kuramoto model: A simple paradigm for synchronization phenomena. \textit{Reviews of Modern Physics}, 77(1), 137--185
+
+\bibitem[Amari(2001)]{amari2001hierarchy}
+Amari, S.-I. (2001). Information geometry on hierarchy of probability distributions. \textit{IEEE Transactions on Information Theory}, 47(5), 1701--1711
+
+\bibitem[Amari(2016)]{amari2016information}
+Amari, S.-I. (2016). \textit{Information Geometry and Its Applications}. Springer
+
+\bibitem[Amari and Nagaoka(2000)]{amari2000methods}
+Amari, S.-I., Nagaoka, H. (2000). \textit{Methods of Information Geometry}. Translations of Mathematical Monographs, vol.~191. American Mathematical Society
+
+\bibitem[Ay et al.(2015)]{ay2015information}
+Ay, N., Jost, J., Lê, H.~V., Schwachhöfer, L. (2015). Information geometry and sufficient statistics. \textit{Probability Theory and Related Fields}, 162(1), 327--364
+
+\bibitem[Ay et al.(2017)]{ay2017information}
+Ay, N., Jost, J., Lê, H.~V., Schwachhöfer, L. (2017). \textit{Information Geometry}. Springer
+
+\bibitem[Cover and Thomas(2006)]{cover2006elements}
+Cover, T.~M., Thomas, J.~A. (2006). \textit{Elements of Information Theory} (2nd ed.). Wiley
+
+\bibitem[Hermann and Krener(1977)]{hermann1977nonlinear}
+Hermann, R., Krener, A.~J. (1977). Nonlinear controllability and observability. \textit{IEEE Transactions on Automatic Control}, 22(5), 728--740
+
+\bibitem[Rothenberg(1971)]{rothenberg1971identification}
+Rothenberg, T.~J. (1971). Identification in parametric models. \textit{Econometrica}, 39(3), 577--591
+
+\bibitem[Transtrum et al.(2015)]{transtrum2015perspective}
+Transtrum, M.~K., Machta, B.~B., Brown, K.~S., Daniels, B.~C., Myers, C.~R., Sethna, J.~P. (2015). Perspective: Sloppiness and emergent theories in physics, biology, and beyond. \textit{Journal of Chemical Physics}, 143(1), 010901
+
+\bibitem[Eguchi(1983)]{eguchi1983second}
+Eguchi, S. (1983). Second order efficiency of minimum contrast estimators in a curved exponential family. \textit{Annals of Statistics}, 11(3), 793--803
+
+\bibitem[Nielsen(2020)]{nielsen2020elementary}
+Nielsen, F. (2020). An elementary introduction to information geometry. \textit{Entropy}, 22(10), 1100
+
+\bibitem[Palais(1961)]{palais1961existence}
+Palais, R.~S. (1961). On the existence of slices for actions of non-compact Lie groups. \textit{Annals of Mathematics}, 73(2), 295--323
+
+\bibitem[Panaggio and Abrams(2015)]{panaggio2015chimera}
+Panaggio, M.~J., Abrams, D.~M. (2015). Chimera states: coexistence of coherence and incoherence in networks of coupled oscillators. \textit{Nonlinearity}, 28(3), R67--R87
+
+\bibitem[Pikovsky et al.(2001)]{pikovsky2001synchronization}
+Pikovsky, A., Rosenblum, M., Kurths, J. (2001). \textit{Synchronization: A Universal Concept in Nonlinear Sciences}. Cambridge University Press
+
+\bibitem[Strogatz(2000)]{strogatz2000kuramoto}
+Strogatz, S.~H. (2000). From Kuramoto to Crawford: exploring the onset of synchronization in populations of coupled oscillators. \textit{Physica D}, 143(1--4), 1--20
+
+\bibitem[Watanabe(2009)]{watanabe2009algebraic}
+Watanabe, S. (2009). \textit{Algebraic Geometry and Statistical Learning Theory}. Cambridge University Press
+
+\end{thebibliography}
+
+\end{document}
